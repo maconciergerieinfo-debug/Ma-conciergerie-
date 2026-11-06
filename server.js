@@ -25,6 +25,9 @@ if (!fs.existsSync(DB_FILE)) {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, ".")));
+app.get("/api/test", (req, res) => {
+  res.json({ message: "API fonctionne !" });
+});
 
 function loadDB() {
   if (!fs.existsSync(DB_FILE)) return { users: [], clients: [], dossiers: [] };
