@@ -36,6 +36,11 @@ function saveDB(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
 async function ensureOwner() {
   const db = loadDB();
 
+  // Sécurité : s'assurer que les tableaux existent
+  if (!db.users) db.users = [];
+  if (!db.clients) db.clients = [];
+  if (!db.dossiers) db.dossiers = [];
+
   const existingUser = db.users.find(
     u => u.email.toLowerCase() === OWNER_EMAIL.toLowerCase()
   );
@@ -43,14 +48,16 @@ async function ensureOwner() {
   const passwordHash = await bcrypt.hash(OWNER_PASSWORD, 12);
 
   if (existingUser) {
+    // Met à jour le mot de passe de l'administratrice
     existingUser.passwordHash = passwordHash;
     existingUser.role = "admin";
     existingUser.name = "Administratrice";
   } else {
+    // Crée l'administratrice si elle n'existe pas encore
     db.users.push({
       id: "admin-1",
       email: OWNER_EMAIL.toLowerCase(),
-      passwordHash,
+      passwordHash: passwordHash,
       role: "admin",
       name: "Administratrice"
     });
