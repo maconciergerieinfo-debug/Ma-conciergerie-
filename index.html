@@ -80,7 +80,27 @@ async function login() {
   }
 }
 function logout(){localStorage.clear();location.reload()}
-async function showApp(){login.classList.add("hidden");app.classList.remove("hidden");try{let payload=JSON.parse(atob(token.split(".")[1]));user=payload;username.textContent=user.name||"";if(user.role!=="admin"){adminPanel.classList.add("hidden");newDossier.classList.add("hidden")}await refresh()}catch(e){logout()}}
+async function showApp() {
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    user = payload;
+
+    document.getElementById("username").textContent = user.name || "";
+
+    if (user.role !== "admin") {
+      document.getElementById("adminPanel").classList.add("hidden");
+      document.getElementById("newDossier").classList.add("hidden");
+    }
+
+    await refresh();
+  } catch (e) {
+    console.error(e);
+    logout();
+  }
+}
 async function refresh(){let d=await api("/api/dashboard");clientsCount.textContent=d.clients;dossiersCount.textContent=d.dossiers;openCount.textContent=d.dossiersOuverts;let ds=await api("/api/dossiers");dossiersList.innerHTML="<h3>Mes dossiers</h3>"+(ds.length?ds.map(x=>`<div class="row"><b>${x.title}</b> · ${x.status}<br><span class="small">${x.clientEmail}</span></div>`).join(""):"<p class='small'>Aucun dossier pour le moment.</p>");if(user.role==="admin"){let cs=await api("/api/clients");clientsList.innerHTML=cs.length?cs.map(x=>`<div class="row"><b>${x.name}</b><br><span class="small">${x.email} · ${x.phone||""}</span></div>`).join(""):"<p class='small'>Aucune cliente pour le moment.</p>"}}
 async function addClient(){try{await api("/api/clients",{method:"POST",body:JSON.stringify({name:cname.value,email:cemail.value,phone:cphone.value})});cname.value=cemail.value=cphone.value="";await refresh()}catch(e){alert(e.message)}}
 async function addDossier(){try{await api("/api/dossiers",{method:"POST",body:JSON.stringify({title:dtitle.value,clientEmail:demail.value,status:dstatus.value,notes:dnotes.value})});dtitle.value=demail.value=dnotes.value="";await refresh()}catch(e){alert(e.message)}}
