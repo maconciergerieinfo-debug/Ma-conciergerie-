@@ -12,7 +12,7 @@ const OWNER_PASSWORD = process.env.OWNER_PASSWORD || "ChangeMoi123!";
 const DB_FILE = path.join(__dirname, "data", "database.json");
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, ".")));
 
 function loadDB() {
   if (!fs.existsSync(DB_FILE)) return { users: [], clients: [], dossiers: [] };
