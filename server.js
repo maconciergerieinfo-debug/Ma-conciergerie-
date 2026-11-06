@@ -9,7 +9,19 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || "CHANGE_ME_BEFORE_PRODUCTION";
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "admin@example.com";
 const OWNER_PASSWORD = process.env.OWNER_PASSWORD || "ChangeMoi123!";
-const DB_FILE = path.join(__dirname, "data", "database.json");
+const DATA_DIR = path.join(__dirname, "data");
+const DB_FILE = path.join(DATA_DIR, "database.json");
+
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+if (!fs.existsSync(DB_FILE)) {
+  fs.writeFileSync(
+    DB_FILE,
+    JSON.stringify({ users: [], clients: [] }, null, 2)
+  );
+}
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, ".")));
