@@ -35,14 +35,28 @@ function saveDB(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
 
 async function ensureOwner() {
   const db = loadDB();
-  if (!db.users.find(u => u.email.toLowerCase() === OWNER_EMAIL.toLowerCase())) {
+
+  const existingUser = db.users.find(
+    u => u.email.toLowerCase() === OWNER_EMAIL.toLowerCase()
+  );
+
+  const passwordHash = await bcrypt.hash(OWNER_PASSWORD, 12);
+
+  if (existingUser) {
+    existingUser.passwordHash = passwordHash;
+    existingUser.role = "admin";
+    existingUser.name = "Administratrice";
+  } else {
     db.users.push({
-      id: "admin-1", email: OWNER_EMAIL.toLowerCase(),
-      passwordHash: await bcrypt.hash(OWNER_PASSWORD, 12),
-      role: "admin", name: "Administratrice"
+      id: "admin-1",
+      email: OWNER_EMAIL.toLowerCase(),
+      passwordHash,
+      role: "admin",
+      name: "Administratrice"
     });
-    saveDB(db);
   }
+
+  saveDB(db);
 }
 function auth(req,res,next) {
   const h = req.headers.authorization || "";
