@@ -19,7 +19,7 @@ if (!fs.existsSync(DATA_DIR)) {
 if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(
     DB_FILE,
-    JSON.stringify({ users: [], clients: [] }, null, 2)
+    JSON.stringify({ users: [], clients: [], dossiers: [] }, null, 2)
   );
 }
 
