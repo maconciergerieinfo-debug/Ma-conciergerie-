@@ -4,32 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#100b12">
-  <meta name="description" content="Ma Conciergerie — Votre espace personnel pour gérer vos demandes et dossiers.">
-
+  <meta name="description" content="Espace de gestion Ma Conciergerie Auto & Maison">
   <title>Ma Conciergerie | Auto & Maison</title>
 
   <style>
-    /* =========================================
-       VARIABLES & BASE
-    ========================================= */
     :root {
       --pink: #f44f9d;
-      --pink-light: #ff86bd;
+      --pink-light: #ff75b4;
       --pink-dark: #a30055;
       --gold: #e6b64a;
       --dark: #100b12;
       --dark-soft: #170f17;
-      --card: #21141f;
-      --card-light: #30202c;
-      --line: rgba(255, 255, 255, .10);
+      --card: #241522;
+      --card-light: #35202f;
+      --line: #5d344d;
       --text: #ffffff;
-      --text-soft: #cdbfc7;
-      --muted: #95818d;
+      --text-soft: #d8c9d1;
+      --danger: #d64b6d;
       --success: #63c59a;
       --warning: #e6b64a;
-      --info: #a98cff;
-      --danger: #e05b7b;
-      --shadow: 0 18px 50px rgba(0, 0, 0, .30);
+      --shadow: 0 18px 50px rgba(0, 0, 0, .28);
     }
 
     * {
@@ -43,12 +37,9 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 15% 0%, rgba(244, 79, 157, .16), transparent 28rem),
-        radial-gradient(circle at 90% 15%, rgba(230, 182, 74, .08), transparent 25rem),
-        linear-gradient(180deg, #1b0d17 0%, var(--dark) 55%);
+        radial-gradient(circle at top, #421a31 0%, #21101d 42%, var(--dark) 78%);
       color: var(--text);
     }
 
@@ -67,52 +58,30 @@
     input:focus-visible,
     textarea:focus-visible,
     select:focus-visible {
-      outline: 3px solid rgba(244, 79, 157, .35);
+      outline: 2px solid var(--pink-light);
       outline-offset: 2px;
     }
 
     .wrap {
-      width: min(1120px, 100%);
+      width: min(1180px, 100%);
       margin: 0 auto;
       padding: 24px;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
     /* =========================================
-       BRAND
+       IDENTITÉ
     ========================================= */
 
     .brand {
-      position: relative;
-      padding: 24px 0 14px;
       text-align: center;
-    }
-
-    .brand-mark {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      margin-bottom: 10px;
-      padding: 7px 13px;
-      border: 1px solid rgba(230, 182, 74, .32);
-      border-radius: 999px;
-      background: rgba(230, 182, 74, .06);
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .8px;
-      text-transform: uppercase;
+      padding: 18px 0 10px;
     }
 
     .brand h1 {
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(40px, 7vw, 62px);
-      font-weight: 700;
-      letter-spacing: -2px;
+      font-family: cursive;
+      font-size: clamp(40px, 7vw, 58px);
+      line-height: 1;
     }
 
     .brand h1 span {
@@ -120,23 +89,21 @@
     }
 
     .brand-subtitle {
-      margin-top: 8px;
-      color: var(--text-soft);
-      font-size: 18px;
-      letter-spacing: 1px;
+      margin-top: 9px;
+      font-size: 17px;
+      letter-spacing: .5px;
     }
 
     .brand-subtitle span {
-      color: var(--pink-light);
+      color: var(--pink);
     }
 
     .tag {
-      max-width: 640px;
+      max-width: 620px;
       margin: 14px auto 0;
       color: var(--pink-light);
-      font-size: 15px;
-      font-weight: 650;
-      line-height: 1.6;
+      font-weight: 700;
+      line-height: 1.55;
     }
 
     /* =========================================
@@ -145,170 +112,70 @@
 
     .box {
       position: relative;
-      margin: 22px 0;
+      margin: 20px 0;
       padding: 24px;
-      border: 1px solid var(--line);
+      background: rgba(36, 21, 34, .96);
+      border: 1px solid rgba(230, 182, 74, .38);
       border-radius: 24px;
-      background:
-        linear-gradient(145deg, rgba(255,255,255,.035), transparent 40%),
-        rgba(33, 20, 31, .94);
       box-shadow: var(--shadow);
     }
 
-    .section-heading {
+    .box-header {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 18px;
+      margin-bottom: 18px;
     }
 
-    .section-heading h2 {
+    h2 {
       margin: 0;
-      font-size: 22px;
-    }
-
-    .eyebrow {
-      margin-bottom: 5px;
-      color: var(--pink-light);
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
     }
 
     h3 {
-      margin: 30px 0 12px;
+      margin: 28px 0 12px;
+    }
+
+    .pink {
+      display: inline-block;
+      margin: 0;
+      padding: 9px 17px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--pink-light), var(--pink-dark));
+      color: white;
       font-size: 17px;
-    }
-
-    .small {
-      margin: 5px 0 0;
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    /* =========================================
-       BOUTONS
-    ========================================= */
-
-    button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-height: 46px;
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 18px;
-      background: linear-gradient(135deg, var(--pink-light), var(--pink-dark));
-      color: #fff;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
-    }
-
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(244, 79, 157, .22);
-    }
-
-    button:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    .secondary {
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.05);
-      color: var(--text);
-    }
-
-    .secondary:hover:not(:disabled) {
-      background: rgba(255,255,255,.09);
-      box-shadow: none;
-    }
-
-    .danger {
-      background: linear-gradient(135deg, #e05b7b, #8e1e40);
-    }
-
-    .danger:hover:not(:disabled) {
-      box-shadow: 0 10px 24px rgba(224, 91, 123, .20);
-    }
-
-    .refresh-btn {
-      min-height: 40px;
-      padding: 9px 14px;
-      font-size: 14px;
-    }
-
-    .logout {
-      min-height: 40px;
-      padding: 9px 14px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      color: var(--text-soft);
-      font-size: 14px;
+      box-shadow: 0 6px 18px rgba(244, 79, 157, .18);
     }
 
     /* =========================================
        FORMULAIRES
     ========================================= */
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    label {
-      color: var(--text-soft);
-      font-size: 13px;
-      font-weight: 750;
-    }
-
     input,
     textarea,
     select {
       width: 100%;
-      min-height: 48px;
-      border: 1px solid rgba(255,255,255,.12);
+      margin: 6px 0;
+      padding: 14px;
+      border: 1px solid #765164;
       border-radius: 13px;
-      padding: 13px 14px;
       outline: none;
-      background: rgba(8, 5, 9, .48);
-      color: var(--text);
-      transition: border-color .2s, box-shadow .2s, background .2s;
+      background: #120d13;
+      color: white;
+      font-size: 15px;
+      transition: .2s;
     }
 
     input::placeholder,
     textarea::placeholder {
-      color: var(--muted);
+      color: #9d8490;
     }
 
     input:focus,
     textarea:focus,
     select:focus {
       border-color: var(--pink);
-      background: rgba(8, 5, 9, .7);
-      box-shadow: 0 0 0 4px rgba(244, 79, 157, .10);
+      box-shadow: 0 0 0 3px rgba(244, 79, 157, .12);
     }
 
     textarea {
@@ -316,221 +183,332 @@
       resize: vertical;
     }
 
+    label {
+      display: block;
+      margin-top: 10px;
+      color: var(--text-soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 16px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
     /* =========================================
-       DASHBOARD
+       BOUTONS
     ========================================= */
 
-    .dashboard-top {
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      background: linear-gradient(90deg, var(--pink), var(--pink-dark));
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(244, 79, 157, .18);
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .secondary {
+      background: transparent;
+      border: 1px solid #765164;
+      color: var(--text-soft);
+    }
+
+    .danger {
+      background: linear-gradient(90deg, #d64b6d, #811c3a);
+    }
+
+    .logout {
+      background: transparent;
+      border: 1px solid #9b5476;
+      color: var(--text-soft);
+      padding: 9px 15px;
+      font-size: 14px;
+    }
+
+    /* =========================================
+       TABLEAU DE BORD
+    ========================================= */
+
+    .dashboard-header {
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
       gap: 20px;
-    }
-
-    .welcome-title {
-      margin: 0;
-      font-size: clamp(24px, 4vw, 32px);
-    }
-
-    .welcome-title span {
-      color: var(--pink-light);
-    }
-
-    .dashboard-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      align-items: flex-start;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
-      margin-top: 24px;
+      margin-top: 22px;
     }
 
     .stat {
-      position: relative;
-      overflow: hidden;
-      padding: 20px;
+      padding: 19px;
       border: 1px solid var(--line);
       border-radius: 18px;
-      background: rgba(12, 8, 13, .34);
-    }
-
-    .stat::after {
-      content: "";
-      position: absolute;
-      right: -20px;
-      bottom: -35px;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: rgba(244, 79, 157, .05);
-    }
-
-    .stat-label {
-      position: relative;
-      z-index: 1;
+      background: var(--dark-soft);
       color: var(--text-soft);
       font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 1px;
+      font-weight: 800;
+      letter-spacing: .7px;
     }
 
     .num {
-      position: relative;
-      z-index: 1;
       margin-top: 7px;
       color: var(--gold);
-      font-size: 36px;
+      font-size: 32px;
       font-weight: 900;
-    }
-
-    .stat-icon {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      font-size: 24px;
-      opacity: .75;
+      letter-spacing: 0;
     }
 
     /* =========================================
-       RECHERCHE & FILTRES
+       FILTRES
     ========================================= */
 
     .toolbar {
       display: flex;
-      gap: 12px;
-      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
     }
 
-    .search-field {
-      flex: 1;
-    }
-
-    .filter-select {
-      width: min(190px, 100%);
+    .toolbar input,
+    .toolbar select {
+      flex: 1 1 180px;
+      margin: 0;
     }
 
     /* =========================================
        LISTES
     ========================================= */
 
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
     .row {
       position: relative;
-      padding: 17px 105px 17px 17px;
-      border: 1px solid rgba(255,255,255,.07);
-      border-radius: 16px;
-      background: rgba(255,255,255,.025);
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+      padding: 17px 120px 17px 6px;
+      border-bottom: 1px solid rgba(93, 52, 77, .75);
     }
 
-    .row:hover {
-      transform: translateY(-1px);
-      border-color: rgba(244, 79, 157, .22);
-      background: rgba(255,255,255,.045);
+    .row:last-child {
+      border-bottom: 0;
     }
 
     .item-title {
       display: block;
-      margin-bottom: 5px;
-      color: #fff;
+      color: white;
       font-size: 16px;
-      line-height: 1.35;
+      line-height: 1.4;
     }
 
-    .meta {
+    .small {
       color: var(--text-soft);
-      font-size: 13px;
-      line-height: 1.5;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 7px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
     }
 
     .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin: 5px 0;
-      padding: 4px 10px;
-      border: 1px solid currentColor;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 850;
+      border: 1px solid rgba(230, 182, 74, .35);
+      color: var(--gold);
+      background: rgba(230, 182, 74, .06);
     }
 
-    .status-new {
-      color: var(--pink-light);
-      background: rgba(244, 79, 157, .08);
+    .priority-haute,
+    .priority-urgente {
+      background: rgba(214, 75, 109, .16);
+      color: #ff9bb6;
     }
 
-    .status-progress {
-      color: var(--info);
-      background: rgba(169, 140, 255, .08);
+    .priority-normale {
+      background: rgba(99, 197, 154, .12);
+      color: #8ce0b8;
     }
 
-    .status-waiting {
-      color: var(--warning);
-      background: rgba(230, 182, 74, .08);
-    }
-
-    .status-done {
-      color: var(--success);
-      background: rgba(99, 197, 154, .08);
+    .priority-basse {
+      background: rgba(216, 201, 209, .1);
+      color: var(--text-soft);
     }
 
     .empty {
-      margin: 0;
-      padding: 30px 18px;
-      border: 1px dashed rgba(255,255,255,.14);
-      border-radius: 16px;
+      margin: 14px 0 4px;
+      padding: 20px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
       color: var(--text-soft);
       text-align: center;
     }
 
-    /* =========================================
-       ACTIONS
-    ========================================= */
-
     .actions {
       position: absolute;
       top: 50%;
-      right: 15px;
+      right: 4px;
       display: flex;
       gap: 7px;
       transform: translateY(-50%);
     }
 
     .icon-btn {
-      width: 38px;
-      min-height: 38px;
-      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
       padding: 0;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
-      background: rgba(255,255,255,.05);
-      box-shadow: none;
+      border: 1px solid #684057;
+      border-radius: 50%;
+      background: #35202f;
       font-size: 15px;
-    }
-
-    .icon-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.10);
       box-shadow: none;
     }
 
-    .delete-btn:hover:not(:disabled) {
-      background: rgba(224, 91, 123, .18);
+    .icon-btn:hover {
+      background: #4a2940;
+      box-shadow: none;
+    }
+
+    .delete-btn:hover {
+      background: #6b2039;
     }
 
     /* =========================================
-       MODALES
+       CALENDRIER
     ========================================= */
+
+    .calendar-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .calendar-title {
+      font-size: 19px;
+      font-weight: 900;
+      text-transform: capitalize;
+      text-align: center;
+    }
+
+    .calendar-nav {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+
+    .weekday {
+      padding: 8px 2px;
+      color: var(--pink-light);
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .calendar-day {
+      position: relative;
+      min-height: 82px;
+      padding: 8px;
+      border: 1px solid rgba(93, 52, 77, .75);
+      border-radius: 13px;
+      background: var(--dark-soft);
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .calendar-day:hover {
+      border-color: var(--pink);
+      transform: translateY(-1px);
+    }
+
+    .calendar-day.empty-day {
+      opacity: .25;
+      cursor: default;
+    }
+
+    .calendar-day.today {
+      border-color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(230, 182, 74, .25);
+    }
+
+    .day-number {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .calendar-event {
+      margin-top: 5px;
+      padding: 3px 5px;
+      overflow: hidden;
+      border-radius: 6px;
+      background: rgba(244, 79, 157, .2);
+      color: #ffc0dc;
+      font-size: 10px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .calendar-event.urgent {
+      background: rgba(214, 75, 109, .25);
+      color: #ffb0c4;
+    }
+
+    .calendar-more {
+      margin-top: 4px;
+      color: var(--gold);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    /* =========================================
+       MODALES ET NOTIFICATIONS
+    ========================================= */
+
+    .hidden {
+      display: none !important;
+    }
 
     .modal-backdrop {
       position: fixed;
@@ -540,33 +518,27 @@
       align-items: center;
       justify-content: center;
       padding: 18px;
-      background: rgba(5, 3, 6, .76);
-      backdrop-filter: blur(8px);
-      animation: fadeIn .18s ease;
+      background: rgba(8, 4, 8, .8);
+      backdrop-filter: blur(6px);
     }
 
     .modal {
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
       max-height: 90vh;
       overflow-y: auto;
       padding: 24px;
-      border: 1px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(230, 182, 74, .58);
       border-radius: 24px;
-      background: #251722;
-      box-shadow: 0 25px 70px rgba(0,0,0,.55);
-      animation: modalIn .22s ease;
-    }
-
-    .modal h2 {
-      margin: 0 0 18px;
+      background: #241522;
+      box-shadow: 0 20px 70px rgba(0, 0, 0, .65);
     }
 
     .modal-actions {
       display: flex;
-      justify-content: flex-end;
       gap: 10px;
-      margin-top: 20px;
+      justify-content: flex-end;
+      margin-top: 18px;
     }
 
     .confirm-text {
@@ -574,175 +546,99 @@
       line-height: 1.6;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .details {
+      display: grid;
+      gap: 12px;
+      margin-top: 15px;
     }
 
-    @keyframes modalIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(.98);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    .detail-card {
+      padding: 13px;
+      border-radius: 12px;
+      background: var(--dark-soft);
+      border: 1px solid var(--line);
     }
-
-    /* =========================================
-       TOASTS
-    ========================================= */
 
     .toast-container {
       position: fixed;
-      top: 20px;
-      right: 20px;
       z-index: 2000;
-      display: flex;
-      flex-direction: column;
+      top: 18px;
+      right: 18px;
+      display: grid;
       gap: 10px;
-      width: min(390px, calc(100vw - 40px));
+      width: min(380px, calc(100vw - 36px));
     }
 
     .toast {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 15px 17px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 16px;
-      background: rgba(36, 21, 34, .98);
-      box-shadow: 0 18px 45px rgba(0,0,0,.35);
-      animation: toastIn .3s ease;
+      padding: 14px 17px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #2a1927;
+      box-shadow: var(--shadow);
+      animation: slideIn .25s ease;
     }
 
     .toast.success {
-      border-left: 4px solid var(--success);
+      border-color: rgba(99, 197, 154, .5);
     }
 
     .toast.error {
-      border-left: 4px solid var(--danger);
+      border-color: rgba(214, 75, 109, .55);
     }
 
-    .toast.info {
-      border-left: 4px solid var(--info);
-    }
-
-    .toast-icon {
-      font-size: 18px;
-    }
-
-    .toast-message {
-      flex: 1;
-      color: var(--text-soft);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .toast-close {
-      min-height: auto;
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      background: transparent;
-      color: var(--text-soft);
-      box-shadow: none;
-    }
-
-    .toast-close:hover {
-      transform: none !important;
-      box-shadow: none !important;
-    }
-
-    @keyframes toastIn {
+    @keyframes slideIn {
       from {
         opacity: 0;
-        transform: translateX(25px);
+        transform: translateX(20px);
       }
-
       to {
         opacity: 1;
         transform: translateX(0);
       }
     }
 
-    /* =========================================
-       LOGIN
-    ========================================= */
-
-    #login {
-      width: min(520px, 100%);
-      margin: 26px auto;
-    }
-
-    .login-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 58px;
-      height: 58px;
-      margin-bottom: 16px;
-      border-radius: 18px;
-      background: rgba(244, 79, 157, .10);
-      font-size: 26px;
-    }
-
-    .error {
-      min-height: 20px;
-      margin-top: 10px;
-      color: #ff9fbd;
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    .login-button {
-      width: 100%;
-      margin-top: 8px;
-    }
-
-    /* =========================================
-       FOOTER
-    ========================================= */
-
     footer {
-      padding: 24px 10px 34px;
-      color: var(--muted);
+      padding: 20px 10px 28px;
+      color: #d9a6bd;
       text-align: center;
-      font-size: 13px;
-      line-height: 1.6;
+      font-size: 14px;
     }
 
-    /* =========================================
-       RESPONSIVE
-    ========================================= */
+    @media (max-width: 850px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
-    @media (max-width: 760px) {
+      .calendar-day {
+        min-height: 70px;
+      }
+    }
+
+    @media (max-width: 650px) {
       .wrap {
-        padding: 15px;
+        padding: 14px;
       }
 
       .box {
-        padding: 18px;
-        border-radius: 20px;
+        padding: 17px;
+        border-radius: 21px;
       }
 
-      .dashboard-top {
+      .dashboard-header {
         flex-direction: column;
       }
 
-      .dashboard-actions {
+      .logout {
         width: 100%;
       }
 
-      .dashboard-actions button {
-        flex: 1;
+      .grid,
+      .form-grid {
+        grid-template-columns: 1fr;
       }
 
-      .grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+      .full {
+        grid-column: auto;
       }
 
       .stat {
@@ -755,25 +651,17 @@
         margin: 0;
       }
 
-      .toolbar {
-        flex-direction: column;
+      .calendar-day {
+        min-height: 58px;
+        padding: 5px;
       }
 
-      .filter-select {
-        width: 100%;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .full {
-        grid-column: auto;
+      .calendar-event {
+        font-size: 8px;
       }
 
       .modal {
-        padding: 19px;
-        border-radius: 20px;
+        padding: 18px;
       }
 
       .modal-actions {
@@ -783,399 +671,276 @@
       .modal-actions button {
         width: 100%;
       }
+
+      .row {
+        padding-right: 6px;
+        padding-bottom: 58px;
+      }
+
+      .actions {
+        top: auto;
+        bottom: 10px;
+        right: 4px;
+        transform: none;
+      }
     }
   </style>
 </head>
 
 <body>
-
   <main class="wrap">
 
-    <!-- =====================================
-         IDENTITÉ
-    ====================================== -->
-
     <header class="brand">
-      <div class="brand-mark">✦ Votre espace personnel</div>
-
       <h1>Ma <span>Conciergerie</span></h1>
-
-      <div class="brand-subtitle">
-        Auto <span>& Maison</span>
-      </div>
-
+      <div class="brand-subtitle">Auto <span>& Maison</span></div>
       <p class="tag">
         Votre alliée de confiance pour faciliter votre quotidien.
       </p>
     </header>
 
-
-    <!-- =====================================
-         CONNEXION
-    ====================================== -->
-
+    <!-- CONNEXION -->
     <section id="login" class="box">
+      <h2 class="pink">🔐 Connexion</h2>
+      <p class="small">Accédez à votre espace Ma Conciergerie.</p>
 
-      <div class="login-icon">🔐</div>
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" autocomplete="email"
+        placeholder="Votre e-mail">
 
-      <div class="section-heading">
-        <div>
-          <div class="eyebrow">Espace sécurisé</div>
-          <h2>Bienvenue</h2>
-          <p class="small">
-            Connectez-vous pour accéder à votre espace personnel.
-          </p>
-        </div>
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password"
+        autocomplete="current-password"
+        placeholder="Votre mot de passe">
+
+      <div style="margin-top: 12px;">
+        <button id="loginButton" type="button">Se connecter</button>
       </div>
 
-      <form id="loginForm">
-
-        <div class="field">
-          <label for="email">Adresse e-mail</label>
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            placeholder="vous@exemple.be"
-            required
-          >
-        </div>
-
-        <div class="field">
-          <label for="password">Mot de passe</label>
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Votre mot de passe"
-            required
-          >
-        </div>
-
-        <button
-          id="loginButton"
-          class="login-button"
-          type="submit"
-        >
-          Se connecter →
-        </button>
-
-      </form>
-
-      <div id="error" class="error" role="alert"></div>
-
+      <div id="error" class="small"
+        style="color:#ff9bc8; margin-top:12px;"></div>
     </section>
 
-
-    <!-- =====================================
-         APPLICATION
-    ====================================== -->
-
+    <!-- APPLICATION -->
     <section id="app" class="hidden">
 
-
       <!-- DASHBOARD -->
-
-      <section class="box">
-
-        <div class="dashboard-top">
-
+      <div class="box">
+        <div class="dashboard-header">
           <div>
-            <div class="eyebrow">Tableau de bord</div>
-
-            <h2 class="welcome-title">
-              Bonjour, <span id="username">...</span> 🌸
-            </h2>
-
-            <p class="small">
-              Retrouvez ici un aperçu de votre activité.
-            </p>
+            <h2>🌸 Bonjour, <span id="username"></span></h2>
+            <p class="small">Voici un aperçu de votre activité.</p>
           </div>
 
-          <div class="dashboard-actions">
-
-            <button
-              id="refreshButton"
-              class="secondary refresh-btn"
-              type="button"
-              onclick="refresh()"
-            >
-              ↻ Actualiser
-            </button>
-
-            <button
-              class="logout"
-              type="button"
-              onclick="logout()"
-            >
-              Déconnexion
-            </button>
-
-          </div>
-
+          <button class="logout" type="button" id="logoutButton">
+            Déconnexion
+          </button>
         </div>
 
-
         <div class="grid">
-
           <div class="stat">
-            <span class="stat-icon">👩</span>
-            <div class="stat-label">CLIENTES</div>
+            <span>CLIENTES</span>
             <div id="clientsCount" class="num">–</div>
           </div>
 
           <div class="stat">
-            <span class="stat-icon">📁</span>
-            <div class="stat-label">DOSSIERS</div>
+            <span>DOSSIERS</span>
             <div id="dossiersCount" class="num">–</div>
           </div>
 
           <div class="stat">
-            <span class="stat-icon">✨</span>
-            <div class="stat-label">EN COURS</div>
+            <span>EN COURS</span>
             <div id="openCount" class="num">–</div>
           </div>
 
+          <div class="stat">
+            <span>À VENIR</span>
+            <div id="upcomingCount" class="num">–</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div id="adminPanel" class="box">
+        <div class="box-header">
+          <h2 class="pink">👩 Mes clientes</h2>
         </div>
 
-      </section>
-
-
-      <!-- =====================================
-           CLIENTES ADMIN
-      ====================================== -->
-
-      <section id="adminPanel" class="box">
-
-        <div class="section-heading">
+        <div class="form-grid">
           <div>
-            <div class="eyebrow">Gestion</div>
-            <h2>👩 Mes clientes</h2>
-            <p class="small">
-              Ajoutez et gérez les clientes de votre conciergerie.
-            </p>
+            <label for="cname">Nom de la cliente</label>
+            <input id="cname" placeholder="Nom complet">
           </div>
-        </div>
-
-
-        <form id="clientForm">
-
-          <div class="form-grid">
-
-            <div class="field">
-              <label for="cname">Nom complet</label>
-              <input
-                id="cname"
-                placeholder="Nom de la cliente"
-                required
-              >
-            </div>
-
-            <div class="field">
-              <label for="cemail">Adresse e-mail</label>
-              <input
-                id="cemail"
-                type="email"
-                placeholder="cliente@exemple.be"
-                required
-              >
-            </div>
-
-            <div class="field full">
-              <label for="cphone">Téléphone</label>
-              <input
-                id="cphone"
-                type="tel"
-                placeholder="+32 ..."
-              >
-            </div>
-
-          </div>
-
-          <button
-            id="addClientButton"
-            type="submit"
-            style="margin-top: 14px;"
-          >
-            + Ajouter la cliente
-          </button>
-
-        </form>
-
-
-        <h3>Liste des clientes</h3>
-
-        <div
-          id="clientsList"
-          class="list"
-        ></div>
-
-      </section>
-
-
-      <!-- =====================================
-           DOSSIERS
-      ====================================== -->
-
-      <section class="box">
-
-        <div class="section-heading">
 
           <div>
-            <div class="eyebrow">Organisation</div>
-            <h2>📁 Mes dossiers</h2>
-
-            <p class="small">
-              Suivez toutes les demandes et leur avancement.
-            </p>
+            <label for="cemail">E-mail</label>
+            <input id="cemail" type="email" placeholder="adresse@email.com">
           </div>
 
+          <div>
+            <label for="cphone">Téléphone</label>
+            <input id="cphone" type="tel" placeholder="+32 ...">
+          </div>
+
+          <div style="display:flex;align-items:end;">
+            <button id="addClientButton" type="button">
+              Ajouter la cliente
+            </button>
+          </div>
         </div>
 
+        <div class="toolbar" style="margin-top:22px;">
+          <input id="clientSearch"
+            placeholder="🔎 Rechercher une cliente...">
+        </div>
 
-        <!-- CRÉATION ADMIN -->
+        <div id="clientsList"></div>
+      </div>
 
-        <form id="newDossier">
+      <!-- DOSSIERS -->
+      <div class="box">
+        <div class="box-header">
+          <h2 class="pink">📁 Mes dossiers</h2>
+        </div>
 
-          <div class="form-grid">
-
-            <div class="field">
-              <label for="dtitle">Titre du dossier</label>
-
-              <input
-                id="dtitle"
-                placeholder="Ex. Entretien véhicule"
-                required
-              >
-            </div>
-
-            <div class="field">
-              <label for="demail">E-mail de la cliente</label>
-
-              <input
-                id="demail"
-                type="email"
-                placeholder="cliente@exemple.be"
-                required
-              >
-            </div>
-
-            <div class="field">
-              <label for="dstatus">Statut</label>
-
-              <select id="dstatus">
-                <option value="Nouveau">Nouveau</option>
-                <option value="En cours">En cours</option>
-                <option value="En attente">En attente</option>
-                <option value="Terminé">Terminé</option>
-              </select>
-            </div>
-
-            <div class="field full">
-              <label for="dnotes">Notes</label>
-
-              <textarea
-                id="dnotes"
-                placeholder="Informations importantes concernant ce dossier..."
-              ></textarea>
-            </div>
-
+        <div id="newDossier" class="form-grid">
+          <div>
+            <label for="dtitle">Titre du dossier</label>
+            <input id="dtitle" placeholder="Ex. Entretien véhicule">
           </div>
 
-          <button
-            id="addDossierButton"
-            type="submit"
-            style="margin-top: 14px;"
-          >
-            + Créer le dossier
-          </button>
+          <div>
+            <label for="demail">Cliente</label>
+            <input id="demail" type="email"
+              placeholder="E-mail de la cliente">
+          </div>
 
-        </form>
+          <div>
+            <label for="dstatus">Statut</label>
+            <select id="dstatus">
+              <option value="Nouveau">Nouveau</option>
+              <option value="En cours">En cours</option>
+              <option value="En attente">En attente</option>
+              <option value="Terminé">Terminé</option>
+            </select>
+          </div>
 
+          <div>
+            <label for="dpriority">Priorité</label>
+            <select id="dpriority">
+              <option value="Basse">Basse</option>
+              <option value="Normale" selected>Normale</option>
+              <option value="Haute">Haute</option>
+              <option value="Urgente">Urgente</option>
+            </select>
+          </div>
 
-        <h3>Rechercher et filtrer</h3>
+          <div>
+            <label for="ddate">Date prévue / échéance</label>
+            <input id="ddate" type="date">
+          </div>
 
-        <div class="toolbar">
+          <div class="full">
+            <label for="dnotes">Notes et informations importantes</label>
+            <textarea id="dnotes"
+              placeholder="Ajoutez les informations utiles concernant ce dossier..."></textarea>
+          </div>
 
-          <input
-            id="searchDossier"
-            class="search-field"
-            type="search"
-            placeholder="🔍 Rechercher un dossier ou une cliente..."
-          >
+          <div>
+            <button id="addDossierButton" type="button">
+              Créer le dossier
+            </button>
+          </div>
+        </div>
 
-          <select
-            id="filterStatus"
-            class="filter-select"
-          >
+        <div class="toolbar" style="margin-top:26px;">
+          <input id="dossierSearch"
+            placeholder="🔎 Rechercher un dossier...">
+
+          <select id="statusFilter">
             <option value="">Tous les statuts</option>
             <option value="Nouveau">Nouveau</option>
             <option value="En cours">En cours</option>
             <option value="En attente">En attente</option>
             <option value="Terminé">Terminé</option>
           </select>
-
         </div>
 
+        <div id="dossiersList"></div>
+      </div>
 
-        <div
-          id="dossiersList"
-          class="list"
-        ></div>
+      <!-- CALENDRIER -->
+      <div class="box">
+        <div class="box-header">
+          <h2 class="pink">📅 Mon calendrier</h2>
+          <span class="small">Cliquez sur une date pour voir ses dossiers.</span>
+        </div>
 
-      </section>
+        <div class="calendar-controls">
+          <button class="calendar-nav secondary"
+            id="prevMonth" type="button" aria-label="Mois précédent">
+            ‹
+          </button>
+
+          <div id="calendarTitle" class="calendar-title"></div>
+
+          <button class="calendar-nav secondary"
+            id="nextMonth" type="button" aria-label="Mois suivant">
+            ›
+          </button>
+        </div>
+
+        <div class="calendar-weekdays">
+          <div class="weekday">Lun</div>
+          <div class="weekday">Mar</div>
+          <div class="weekday">Mer</div>
+          <div class="weekday">Jeu</div>
+          <div class="weekday">Ven</div>
+          <div class="weekday">Sam</div>
+          <div class="weekday">Dim</div>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
 
     </section>
 
-
     <footer>
-      🌸 Ma Conciergerie · Auto & Maison<br>
       📞 +32 471 83 00 32 · Disponible dans toute la Belgique 🇧🇪
     </footer>
 
   </main>
 
-
-  <!-- MODALES -->
-
-  <div
-    id="modalContainer"
-    class="hidden"
-  ></div>
-
-
-  <!-- NOTIFICATIONS -->
-
-  <div
-    id="toastContainer"
-    class="toast-container"
-    aria-live="polite"
-  ></div>
-
+  <div id="modalContainer" class="hidden"></div>
+  <div id="toastContainer" class="toast-container"></div>
 
   <script>
     "use strict";
 
-    /* =========================================
-       CONFIGURATION
-    ========================================= */
-
     const API_URL = "https://ma-conciergerie-p0en.onrender.com";
+
+    const VALID_STATUSES = [
+      "Nouveau",
+      "En cours",
+      "En attente",
+      "Terminé"
+    ];
+
+    const VALID_PRIORITIES = [
+      "Basse",
+      "Normale",
+      "Haute",
+      "Urgente"
+    ];
 
     let token = localStorage.getItem("token") || "";
     let user = null;
-
-    let dossiersCache = [];
-
-
-    /* =========================================
-       OUTILS
-    ========================================= */
+    let allClients = [];
+    let allDossiers = [];
+    let calendarDate = new Date();
 
     function getEl(id) {
       return document.getElementById(id);
     }
-
 
     function escapeHtml(value) {
       const div = document.createElement("div");
@@ -1183,138 +948,104 @@
       return div.innerHTML;
     }
 
+    function formatDate(dateString) {
+      if (!dateString) return "Aucune date prévue";
 
-    function setButtonLoading(button, loading, loadingText = "Chargement...") {
+      const date = new Date(dateString + "T12:00:00");
+
+      if (Number.isNaN(date.getTime())) {
+        return "Date non définie";
+      }
+
+      return new Intl.DateTimeFormat("fr-BE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }).format(date);
+    }
+
+    function dateKey(year, month, day) {
+      const monthValue = String(month + 1).padStart(2, "0");
+      const dayValue = String(day).padStart(2, "0");
+      return `${year}-${monthValue}-${dayValue}`;
+    }
+
+    function priorityClass(priority) {
+      return "priority-" +
+        String(priority || "Normale")
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = "toast " + type;
+      toast.textContent = message;
+
+      getEl("toastContainer").appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 4000);
+    }
+
+    function setButtonLoading(button, loading, text = "Chargement...") {
       if (!button) return;
 
       if (loading) {
-        if (!button.dataset.originalText) {
-          button.dataset.originalText = button.innerHTML;
-        }
-
-        button.textContent = loadingText;
+        button.dataset.originalText = button.textContent;
+        button.textContent = text;
         button.disabled = true;
-
       } else {
-        button.innerHTML =
-          button.dataset.originalText || button.innerHTML;
-
+        button.textContent =
+          button.dataset.originalText || button.textContent;
         button.disabled = false;
       }
     }
-
 
     function clearSession() {
       localStorage.removeItem("token");
       token = "";
       user = null;
+      allClients = [];
+      allDossiers = [];
     }
-
-
-    /* =========================================
-       NOTIFICATIONS
-    ========================================= */
-
-    function showToast(message, type = "success") {
-
-      const container = getEl("toastContainer");
-
-      const icons = {
-        success: "✓",
-        error: "!",
-        info: "ℹ"
-      };
-
-      const toast = document.createElement("div");
-
-      toast.className = `toast ${type}`;
-
-      const icon = document.createElement("div");
-      icon.className = "toast-icon";
-      icon.textContent = icons[type] || "ℹ";
-
-      const text = document.createElement("div");
-      text.className = "toast-message";
-      text.textContent = message;
-
-      const closeButton = document.createElement("button");
-      closeButton.className = "toast-close";
-      closeButton.type = "button";
-      closeButton.textContent = "×";
-      closeButton.setAttribute("aria-label", "Fermer");
-
-      closeButton.onclick = () => toast.remove();
-
-      toast.append(icon, text, closeButton);
-
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.remove();
-      }, 4500);
-    }
-
-
-    /* =========================================
-       MODALES
-    ========================================= */
 
     function closeModal() {
-
       const container = getEl("modalContainer");
-
       container.innerHTML = "";
       container.classList.add("hidden");
-
     }
 
-
     function openModal(content) {
-
       const container = getEl("modalContainer");
 
       container.innerHTML = `
-        <div
-          class="modal-backdrop"
-          onclick="handleBackdrop(event)"
-        >
+        <div class="modal-backdrop">
           ${content}
         </div>
       `;
 
+      const backdrop = container.querySelector(".modal-backdrop");
+
+      backdrop.addEventListener("click", event => {
+        if (event.target === backdrop) {
+          closeModal();
+        }
+      });
+
       container.classList.remove("hidden");
-
     }
-
-
-    function handleBackdrop(event) {
-
-      if (event.target.classList.contains("modal-backdrop")) {
-        closeModal();
-      }
-
-    }
-
-
-    document.addEventListener("keydown", event => {
-
-      if (event.key === "Escape") {
-        closeModal();
-      }
-
-    });
-
-
-    /* =========================================
-       API
-    ========================================= */
 
     async function api(url, options = {}) {
-
       const headers = {
-        ...(options.headers || {}),
-        "Content-Type": "application/json"
+        ...(options.headers || {})
       };
+
+      if (options.body) {
+        headers["Content-Type"] = "application/json";
+      }
 
       if (token) {
         headers.Authorization = "Bearer " + token;
@@ -1323,20 +1054,15 @@
       let response;
 
       try {
-
         response = await fetch(API_URL + url, {
           ...options,
           headers
         });
-
       } catch {
-
         throw new Error(
           "Impossible de contacter le serveur. Vérifiez votre connexion."
         );
-
       }
-
 
       let data = {};
 
@@ -1346,1467 +1072,894 @@
         // Réponse vide.
       }
 
-
       if (!response.ok) {
-
-        const message =
-          data.error ||
-          "Une erreur est survenue.";
-
         if (response.status === 401) {
           clearSession();
         }
 
-        throw new Error(message);
-
+        throw new Error(
+          data.error || "Une erreur est survenue."
+        );
       }
 
       return data;
-
     }
-
 
     /* =========================================
        AUTHENTIFICATION
     ========================================= */
 
-    getEl("loginForm").addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        await login();
-
-      }
-    );
-
-
     async function login() {
-
+      const email = getEl("email").value.trim();
+      const password = getEl("password").value;
+      const button = getEl("loginButton");
       const errorBox = getEl("error");
-
-      const email =
-        getEl("email").value.trim();
-
-      const password =
-        getEl("password").value;
-
-      const button =
-        getEl("loginButton");
 
       errorBox.textContent = "";
 
-
       if (!email || !password) {
-
         errorBox.textContent =
           "Veuillez renseigner votre e-mail et votre mot de passe.";
-
         return;
-
       }
 
-
-      setButtonLoading(
-        button,
-        true,
-        "Connexion..."
-      );
-
+      setButtonLoading(button, true, "Connexion...");
 
       try {
-
-        const result = await api(
-          "/api/login",
-          {
-            method: "POST",
-
-            body: JSON.stringify({
-              email,
-              password
-            })
-          }
-        );
-
+        const result = await api("/api/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password })
+        });
 
         if (!result.token) {
-          throw new Error(
-            "Le serveur n'a pas fourni de session."
-          );
+          throw new Error("Le serveur n'a pas fourni de session.");
         }
 
-
         token = result.token;
+        user = result.user || null;
 
-        user =
-          result.user || null;
-
-        localStorage.setItem(
-          "token",
-          token
-        );
-
+        localStorage.setItem("token", token);
         getEl("password").value = "";
 
         await showApp();
-
-        showToast(
-          "Connexion réussie. Bienvenue dans votre espace !",
-          "success"
-        );
-
       } catch (error) {
-
-        errorBox.textContent =
-          error.message;
-
+        errorBox.textContent = error.message;
       } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+        setButtonLoading(button, false);
       }
-
     }
-
 
     function logout() {
-
       clearSession();
-
-      getEl("app").classList.add("hidden");
-
-      getEl("login").classList.remove("hidden");
-
-      getEl("email").value = "";
-      getEl("password").value = "";
-
-      showToast(
-        "Vous avez été déconnectée.",
-        "info"
-      );
-
+      location.reload();
     }
 
-
-    /* =========================================
-       APPLICATION
-    ========================================= */
-
     async function showApp() {
-
       getEl("login").classList.add("hidden");
-
       getEl("app").classList.remove("hidden");
 
-
       try {
-
-        const parts =
-          token.split(".");
-
-        if (parts.length !== 3) {
-          throw new Error("Session invalide.");
-        }
-
-
-        const base64 =
-          parts[1]
-            .replace(/-/g, "+")
-            .replace(/_/g, "/");
-
-        const payload =
-          JSON.parse(
-            decodeURIComponent(
-              Array.prototype.map
-                .call(
-                  atob(base64),
-                  character =>
-                    "%" +
-                    (
-                      "00" +
-                      character
-                        .charCodeAt(0)
-                        .toString(16)
-                    ).slice(-2)
-                )
-                .join("")
+        if (!user) {
+          const payload = JSON.parse(
+            atob(
+              token.split(".")[1]
+                .replace(/-/g, "+")
+                .replace(/_/g, "/")
             )
           );
 
-
-        user =
-          user || payload;
-
+          user = payload;
+        }
 
         getEl("username").textContent =
-          user.name ||
-          user.email ||
-          "Bienvenue";
+          user.name || user.email || "Bienvenue";
 
-
-        const isAdmin =
-          user.role === "admin";
-
+        const isAdmin = user.role === "admin";
 
         getEl("adminPanel")
-          .classList.toggle(
-            "hidden",
-            !isAdmin
-          );
-
+          .classList.toggle("hidden", !isAdmin);
 
         getEl("newDossier")
-          .classList.toggle(
-            "hidden",
-            !isAdmin
-          );
-
+          .classList.toggle("hidden", !isAdmin);
 
         await refresh();
-
       } catch (error) {
-
-        console.error(
-          "Erreur application :",
-          error
-        );
-
-        getEl("app")
-          .classList.add("hidden");
-
-        getEl("login")
-          .classList.remove("hidden");
-
-        clearSession();
+        getEl("app").classList.add("hidden");
+        getEl("login").classList.remove("hidden");
 
         getEl("error").textContent =
-          "Votre session n'a pas pu être restaurée. Veuillez vous reconnecter.";
-
+          "Impossible de charger votre espace : " + error.message;
       }
-
     }
 
-
     /* =========================================
-       TABLEAU DE BORD
+       DONNÉES
     ========================================= */
 
     async function refresh() {
+      const dashboard = await api("/api/dashboard");
 
-      const button =
-        getEl("refreshButton");
+      getEl("clientsCount").textContent =
+        dashboard.clients ?? 0;
 
-      setButtonLoading(
-        button,
-        true,
-        "Actualisation..."
-      );
+      getEl("dossiersCount").textContent =
+        dashboard.dossiers ?? 0;
 
+      getEl("openCount").textContent =
+        dashboard.dossiersOuverts ?? 0;
 
-      try {
+      getEl("upcomingCount").textContent =
+        dashboard.dossiersAVenir ?? 0;
 
-        const dashboard =
-          await api("/api/dashboard");
+      const requests = [
+        api("/api/dossiers")
+      ];
 
-
-        getEl("clientsCount").textContent =
-          dashboard.clients ?? 0;
-
-        getEl("dossiersCount").textContent =
-          dashboard.dossiers ?? 0;
-
-        getEl("openCount").textContent =
-          dashboard.dossiersOuverts ?? 0;
-
-
-        await loadDossiers();
-
-
-        if (
-          user &&
-          user.role === "admin"
-        ) {
-          await loadClients();
-        }
-
-
-        showToast(
-          "Vos données sont à jour.",
-          "info"
-        );
-
-      } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
-      } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+      if (user?.role === "admin") {
+        requests.push(api("/api/clients"));
       }
 
-    }
+      const results = await Promise.all(requests);
 
+      allDossiers = Array.isArray(results[0])
+        ? results[0]
+        : [];
 
-    /* =========================================
-       STATUTS
-    ========================================= */
-
-    function getStatusClass(status) {
-
-      const classes = {
-
-        "Nouveau":
-          "status-new",
-
-        "En cours":
-          "status-progress",
-
-        "En attente":
-          "status-waiting",
-
-        "Terminé":
-          "status-done"
-
-      };
-
-
-      return (
-        classes[status] ||
-        "status-new"
-      );
-
-    }
-
-
-    /* =========================================
-       DOSSIERS
-    ========================================= */
-
-    async function loadDossiers() {
-
-      const dossiers =
-        await api("/api/dossiers");
-
-      dossiersCache =
-        Array.isArray(dossiers)
-          ? dossiers
+      if (user?.role === "admin") {
+        allClients = Array.isArray(results[1])
+          ? results[1]
           : [];
+      }
 
+      renderClients();
       renderDossiers();
-
+      renderCalendar();
     }
-
-
-    function renderDossiers() {
-
-      const list =
-        getEl("dossiersList");
-
-      const search =
-        getEl("searchDossier")
-          .value
-          .trim()
-          .toLowerCase();
-
-      const filter =
-        getEl("filterStatus")
-          .value;
-
-
-      const dossiers =
-        dossiersCache.filter(
-          dossier => {
-
-            const email =
-              dossier.client_email ||
-              dossier.clientEmail ||
-              "";
-
-            const searchable =
-              [
-                dossier.title,
-                email,
-                dossier.status,
-                dossier.notes
-              ]
-                .join(" ")
-                .toLowerCase();
-
-
-            const matchesSearch =
-              !search ||
-              searchable.includes(search);
-
-
-            const matchesStatus =
-              !filter ||
-              dossier.status === filter;
-
-
-            return (
-              matchesSearch &&
-              matchesStatus
-            );
-
-          }
-        );
-
-
-      if (dossiers.length === 0) {
-
-        list.innerHTML =
-          `
-          <p class="empty">
-            Aucun dossier ne correspond à votre recherche.
-          </p>
-          `;
-
-        return;
-
-      }
-
-
-      list.innerHTML =
-        dossiers
-          .map(
-            dossier => {
-
-              const email =
-                dossier.client_email ||
-                dossier.clientEmail ||
-                "";
-
-
-              const actions =
-                user &&
-                user.role === "admin"
-
-                  ? `
-                    <div class="actions">
-
-                      <button
-                        type="button"
-                        class="icon-btn"
-                        title="Modifier"
-                        aria-label="Modifier le dossier"
-                        onclick="openEditDossier('${escapeHtml(dossier.id)}')"
-                      >
-                        ✏️
-                      </button>
-
-                      <button
-                        type="button"
-                        class="icon-btn delete-btn"
-                        title="Supprimer"
-                        aria-label="Supprimer le dossier"
-                        onclick="confirmDeleteDossier('${escapeHtml(dossier.id)}')"
-                      >
-                        🗑️
-                      </button>
-
-                    </div>
-                  `
-
-                  : "";
-
-
-              return `
-                <article class="row">
-
-                  <strong class="item-title">
-                    ${escapeHtml(dossier.title)}
-                  </strong>
-
-                  <span class="status ${getStatusClass(dossier.status)}">
-                    ${escapeHtml(dossier.status)}
-                  </span>
-
-                  <div class="meta">
-                    ${escapeHtml(email)}
-                  </div>
-
-                  ${actions}
-
-                </article>
-              `;
-
-            }
-          )
-          .join("");
-
-    }
-
-
-    getEl("searchDossier")
-      .addEventListener(
-        "input",
-        renderDossiers
-      );
-
-
-    getEl("filterStatus")
-      .addEventListener(
-        "change",
-        renderDossiers
-      );
-
-
-    getEl("newDossier")
-      .addEventListener(
-        "submit",
-        async event => {
-
-          event.preventDefault();
-
-          await addDossier();
-
-        }
-      );
-
-
-    async function addDossier() {
-
-      const button =
-        getEl("addDossierButton");
-
-      const title =
-        getEl("dtitle")
-          .value
-          .trim();
-
-      const clientEmail =
-        getEl("demail")
-          .value
-          .trim();
-
-      const status =
-        getEl("dstatus")
-          .value;
-
-      const notes =
-        getEl("dnotes")
-          .value
-          .trim();
-
-
-      if (!title || !clientEmail) {
-
-        showToast(
-          "Veuillez renseigner le titre et l'e-mail de la cliente.",
-          "error"
-        );
-
-        return;
-
-      }
-
-
-      setButtonLoading(
-        button,
-        true,
-        "Création..."
-      );
-
-
-      try {
-
-        await api(
-          "/api/dossiers",
-          {
-            method: "POST",
-
-            body: JSON.stringify({
-              title,
-              clientEmail,
-              status,
-              notes
-            })
-          }
-        );
-
-
-        getEl("newDossier")
-          .reset();
-
-
-        getEl("dstatus").value =
-          "Nouveau";
-
-
-        await refresh();
-
-        showToast(
-          "Le dossier a été créé avec succès.",
-          "success"
-        );
-
-      } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
-      } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
-      }
-
-    }
-
 
     /* =========================================
        CLIENTES
     ========================================= */
 
-    async function loadClients() {
+    function renderClients() {
+      if (user?.role !== "admin") return;
 
-      const clients =
-        await api("/api/clients");
+      const search =
+        getEl("clientSearch").value
+          .trim()
+          .toLowerCase();
 
-      const list =
-        getEl("clientsList");
+      const clients = allClients.filter(client => {
+        const content = [
+          client.name,
+          client.email,
+          client.phone
+        ].join(" ").toLowerCase();
 
+        return content.includes(search);
+      });
 
-      if (
-        !Array.isArray(clients) ||
-        clients.length === 0
-      ) {
+      const list = getEl("clientsList");
 
+      if (clients.length === 0) {
         list.innerHTML =
-          `
-          <p class="empty">
-            Aucune cliente pour le moment.
-          </p>
-          `;
-
+          '<p class="empty">Aucune cliente trouvée.</p>';
         return;
-
       }
 
+      list.innerHTML = clients.map(client => `
+        <div class="row">
+          <strong class="item-title">
+            ${escapeHtml(client.name)}
+          </strong>
 
-      list.innerHTML =
-        clients
-          .map(
-            client => `
-              <article class="row">
+          <span class="small">
+            ${escapeHtml(client.email)}
+            ${client.phone
+              ? " · " + escapeHtml(client.phone)
+              : ""}
+          </span>
 
-                <strong class="item-title">
-                  ${escapeHtml(client.name)}
-                </strong>
+          <div class="actions">
+            <button class="icon-btn" type="button"
+              aria-label="Modifier"
+              data-action="edit-client"
+              data-id="${escapeHtml(client.id)}">✏️</button>
 
-                <div class="meta">
-                  ${escapeHtml(client.email)}
-                  ${
-                    client.phone
-                      ? " · " +
-                        escapeHtml(client.phone)
-                      : ""
-                  }
-                </div>
-
-                <div class="actions">
-
-                  <button
-                    type="button"
-                    class="icon-btn"
-                    title="Modifier"
-                    aria-label="Modifier la cliente"
-                    onclick="openEditClient('${escapeHtml(client.id)}')"
-                  >
-                    ✏️
-                  </button>
-
-                  <button
-                    type="button"
-                    class="icon-btn delete-btn"
-                    title="Supprimer"
-                    aria-label="Supprimer la cliente"
-                    onclick="confirmDeleteClient('${escapeHtml(client.id)}')"
-                  >
-                    🗑️
-                  </button>
-
-                </div>
-
-              </article>
-            `
-          )
-          .join("");
-
+            <button class="icon-btn delete-btn" type="button"
+              aria-label="Supprimer"
+              data-action="delete-client"
+              data-id="${escapeHtml(client.id)}">🗑️</button>
+          </div>
+        </div>
+      `).join("");
     }
-
-
-    getEl("clientForm")
-      .addEventListener(
-        "submit",
-        async event => {
-
-          event.preventDefault();
-
-          await addClient();
-
-        }
-      );
-
 
     async function addClient() {
-
-      const button =
-        getEl("addClientButton");
-
-      const name =
-        getEl("cname")
-          .value
-          .trim();
-
-      const email =
-        getEl("cemail")
-          .value
-          .trim();
-
-      const phone =
-        getEl("cphone")
-          .value
-          .trim();
-
+      const name = getEl("cname").value.trim();
+      const email = getEl("cemail").value.trim();
+      const phone = getEl("cphone").value.trim();
+      const button = getEl("addClientButton");
 
       if (!name || !email) {
-
         showToast(
-          "Veuillez renseigner le nom et l'e-mail.",
+          "Le nom et l'adresse e-mail sont obligatoires.",
           "error"
         );
-
         return;
-
       }
 
-
-      setButtonLoading(
-        button,
-        true,
-        "Ajout..."
-      );
-
+      setButtonLoading(button, true, "Ajout...");
 
       try {
+        await api("/api/clients", {
+          method: "POST",
+          body: JSON.stringify({ name, email, phone })
+        });
 
-        await api(
-          "/api/clients",
-          {
-            method: "POST",
-
-            body: JSON.stringify({
-              name,
-              email,
-              phone
-            })
-          }
-        );
-
-
-        getEl("clientForm")
-          .reset();
-
+        getEl("cname").value = "";
+        getEl("cemail").value = "";
+        getEl("cphone").value = "";
 
         await refresh();
-
-        showToast(
-          "La cliente a été ajoutée avec succès.",
-          "success"
-        );
-
+        showToast("La cliente a été ajoutée avec succès.");
       } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
+        showToast(error.message, "error");
       } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+        setButtonLoading(button, false);
       }
-
     }
 
+    function openEditClient(id) {
+      const client =
+        allClients.find(item => item.id === id);
 
-    /* =========================================
-       MODIFIER CLIENTE
-    ========================================= */
+      if (!client) {
+        showToast("Cliente introuvable.", "error");
+        return;
+      }
 
-    async function openEditClient(id) {
+      openModal(`
+        <div class="modal">
+          <h2 class="pink">Modifier la cliente</h2>
 
-      try {
+          <label for="editClientName">Nom</label>
+          <input id="editClientName"
+            value="${escapeHtml(client.name)}">
 
-        const clients =
-          await api("/api/clients");
+          <label for="editClientEmail">E-mail</label>
+          <input id="editClientEmail" type="email"
+            value="${escapeHtml(client.email)}">
 
-        const client =
-          clients.find(
-            item => item.id === id
-          );
+          <label for="editClientPhone">Téléphone</label>
+          <input id="editClientPhone"
+            value="${escapeHtml(client.phone || "")}">
 
+          <div class="modal-actions">
+            <button class="secondary" type="button"
+              id="cancelModal">Annuler</button>
 
-        if (!client) {
-          throw new Error(
-            "Cliente introuvable."
-          );
-        }
-
-
-        openModal(`
-          <div class="modal">
-
-            <div class="eyebrow">
-              Modification
-            </div>
-
-            <h2>Modifier la cliente</h2>
-
-
-            <div class="field">
-
-              <label for="editClientName">
-                Nom complet
-              </label>
-
-              <input
-                id="editClientName"
-                value="${escapeHtml(client.name)}"
-                placeholder="Nom"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="editClientEmail">
-                E-mail
-              </label>
-
-              <input
-                id="editClientEmail"
-                type="email"
-                value="${escapeHtml(client.email)}"
-                placeholder="E-mail"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="editClientPhone">
-                Téléphone
-              </label>
-
-              <input
-                id="editClientPhone"
-                type="tel"
-                value="${escapeHtml(client.phone || "")}"
-                placeholder="Téléphone"
-              >
-
-            </div>
-
-
-            <div class="modal-actions">
-
-              <button
-                type="button"
-                class="secondary"
-                onclick="closeModal()"
-              >
-                Annuler
-              </button>
-
-
-              <button
-                type="button"
-                id="saveClientButton"
-                onclick="saveClient('${escapeHtml(id)}')"
-              >
-                Enregistrer
-              </button>
-
-            </div>
-
+            <button type="button"
+              id="saveClientButton">Enregistrer</button>
           </div>
-        `);
+        </div>
+      `);
 
-      } catch (error) {
+      getEl("cancelModal").onclick = closeModal;
 
-        showToast(
-          error.message,
-          "error"
-        );
-
-      }
-
+      getEl("saveClientButton").onclick =
+        () => saveClient(id);
     }
-
 
     async function saveClient(id) {
+      const button = getEl("saveClientButton");
 
-      const button =
-        getEl("saveClientButton");
-
-      const name =
-        getEl("editClientName")
-          .value
-          .trim();
-
-      const email =
-        getEl("editClientEmail")
-          .value
-          .trim();
-
-      const phone =
-        getEl("editClientPhone")
-          .value
-          .trim();
-
+      const name = getEl("editClientName").value.trim();
+      const email = getEl("editClientEmail").value.trim();
+      const phone = getEl("editClientPhone").value.trim();
 
       if (!name || !email) {
-
-        showToast(
-          "Le nom et l'e-mail sont obligatoires.",
-          "error"
-        );
-
+        showToast("Le nom et l'e-mail sont obligatoires.", "error");
         return;
-
       }
 
-
-      setButtonLoading(
-        button,
-        true,
-        "Enregistrement..."
-      );
-
+      setButtonLoading(button, true, "Enregistrement...");
 
       try {
-
-        await api(
-          "/api/clients/" +
-          encodeURIComponent(id),
-          {
-            method: "PUT",
-
-            body: JSON.stringify({
-              name,
-              email,
-              phone
-            })
-          }
-        );
-
+        await api("/api/clients/" + encodeURIComponent(id), {
+          method: "PUT",
+          body: JSON.stringify({ name, email, phone })
+        });
 
         closeModal();
-
         await refresh();
-
-        showToast(
-          "Les informations de la cliente ont été mises à jour.",
-          "success"
-        );
-
+        showToast("La cliente a été modifiée.");
       } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
+        showToast(error.message, "error");
       } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+        setButtonLoading(button, false);
       }
-
     }
 
+    function confirmDeleteClient(id) {
+      openModal(`
+        <div class="modal">
+          <h2 class="pink">Supprimer cette cliente ?</h2>
 
-    /* =========================================
-       MODIFIER DOSSIER
-    ========================================= */
+          <p class="confirm-text">
+            Cette suppression est définitive. Une cliente possédant
+            encore des dossiers ne pourra pas être supprimée.
+          </p>
 
-    async function openEditDossier(id) {
+          <div class="modal-actions">
+            <button class="secondary" type="button"
+              id="cancelModal">Annuler</button>
+
+            <button class="danger" type="button"
+              id="confirmDeleteClient">
+              Supprimer définitivement
+            </button>
+          </div>
+        </div>
+      `);
+
+      getEl("cancelModal").onclick = closeModal;
+      getEl("confirmDeleteClient").onclick =
+        () => deleteClient(id);
+    }
+
+    async function deleteClient(id) {
+      const button = getEl("confirmDeleteClient");
+
+      setButtonLoading(button, true, "Suppression...");
 
       try {
+        await api("/api/clients/" + encodeURIComponent(id), {
+          method: "DELETE"
+        });
 
-        const dossier =
-          dossiersCache.find(
-            item => item.id === id
-          );
-
-
-        if (!dossier) {
-          throw new Error(
-            "Dossier introuvable."
-          );
-        }
-
-
-        const clientEmail =
-          dossier.client_email ||
-          dossier.clientEmail ||
-          "";
-
-
-        openModal(`
-          <div class="modal">
-
-            <div class="eyebrow">
-              Modification
-            </div>
-
-            <h2>Modifier le dossier</h2>
-
-
-            <div class="field">
-
-              <label for="editDossierTitle">
-                Titre du dossier
-              </label>
-
-              <input
-                id="editDossierTitle"
-                value="${escapeHtml(dossier.title)}"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="editDossierEmail">
-                E-mail de la cliente
-              </label>
-
-              <input
-                id="editDossierEmail"
-                type="email"
-                value="${escapeHtml(clientEmail)}"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="editDossierStatus">
-                Statut
-              </label>
-
-              <select id="editDossierStatus">
-
-                <option value="Nouveau">
-                  Nouveau
-                </option>
-
-                <option value="En cours">
-                  En cours
-                </option>
-
-                <option value="En attente">
-                  En attente
-                </option>
-
-                <option value="Terminé">
-                  Terminé
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="editDossierNotes">
-                Notes
-              </label>
-
-              <textarea
-                id="editDossierNotes"
-              >${escapeHtml(dossier.notes || "")}</textarea>
-
-            </div>
-
-
-            <div class="modal-actions">
-
-              <button
-                type="button"
-                class="secondary"
-                onclick="closeModal()"
-              >
-                Annuler
-              </button>
-
-
-              <button
-                type="button"
-                id="saveDossierButton"
-                onclick="saveDossier('${escapeHtml(id)}')"
-              >
-                Enregistrer
-              </button>
-
-            </div>
-
-          </div>
-        `);
-
-
-        getEl("editDossierStatus").value =
-          [
-            "Nouveau",
-            "En cours",
-            "En attente",
-            "Terminé"
-          ].includes(dossier.status)
-
-            ? dossier.status
-
-            : "Nouveau";
-
+        closeModal();
+        await refresh();
+        showToast("La cliente a été supprimée.");
       } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
+        showToast(error.message, "error");
+        setButtonLoading(button, false);
       }
-
     }
 
+    /* =========================================
+       DOSSIERS
+    ========================================= */
 
-    async function saveDossier(id) {
-
-      const button =
-        getEl("saveDossierButton");
-
-      const title =
-        getEl("editDossierTitle")
-          .value
-          .trim();
-
-      const clientEmail =
-        getEl("editDossierEmail")
-          .value
-          .trim();
+    function renderDossiers() {
+      const search =
+        getEl("dossierSearch").value
+          .trim()
+          .toLowerCase();
 
       const status =
-        getEl("editDossierStatus")
-          .value;
+        getEl("statusFilter").value;
 
-      const notes =
-        getEl("editDossierNotes")
-          .value
-          .trim();
+      const dossiers = allDossiers.filter(dossier => {
+        const content = [
+          dossier.title,
+          dossier.client_email,
+          dossier.notes,
+          dossier.status,
+          dossier.priority
+        ].join(" ").toLowerCase();
 
+        return content.includes(search) &&
+          (!status || dossier.status === status);
+      });
+
+      const list = getEl("dossiersList");
+
+      if (dossiers.length === 0) {
+        list.innerHTML =
+          '<p class="empty">Aucun dossier trouvé.</p>';
+        return;
+      }
+
+      list.innerHTML = dossiers.map(dossier => {
+        const isAdmin = user?.role === "admin";
+
+        const actions = isAdmin
+          ? `
+            <div class="actions">
+              <button class="icon-btn" type="button"
+                data-action="view-dossier"
+                data-id="${escapeHtml(dossier.id)}">👁️</button>
+
+              <button class="icon-btn" type="button"
+                data-action="edit-dossier"
+                data-id="${escapeHtml(dossier.id)}">✏️</button>
+
+              <button class="icon-btn delete-btn" type="button"
+                data-action="delete-dossier"
+                data-id="${escapeHtml(dossier.id)}">🗑️</button>
+            </div>
+          `
+          : `
+            <div class="actions">
+              <button class="icon-btn" type="button"
+                data-action="view-dossier"
+                data-id="${escapeHtml(dossier.id)}">👁️</button>
+            </div>
+          `;
+
+        return `
+          <div class="row">
+            <strong class="item-title">
+              ${escapeHtml(dossier.title)}
+            </strong>
+
+            <div class="badges">
+              <span class="badge status">
+                ${escapeHtml(dossier.status || "Nouveau")}
+              </span>
+
+              <span class="badge ${priorityClass(dossier.priority)}">
+                ${escapeHtml(dossier.priority || "Normale")}
+              </span>
+            </div>
+
+            <span class="small">
+              👩 ${escapeHtml(dossier.client_email || "")}
+              <br>
+              📅 ${formatDate(dossier.due_date)}
+            </span>
+
+            ${actions}
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function addDossier() {
+      const title = getEl("dtitle").value.trim();
+      const clientEmail = getEl("demail").value.trim();
+      const status = getEl("dstatus").value;
+      const priority = getEl("dpriority").value;
+      const dueDate = getEl("ddate").value;
+      const notes = getEl("dnotes").value.trim();
+
+      const button = getEl("addDossierButton");
 
       if (!title || !clientEmail) {
-
         showToast(
           "Le titre et l'e-mail de la cliente sont obligatoires.",
           "error"
         );
-
         return;
-
       }
 
-
-      setButtonLoading(
-        button,
-        true,
-        "Enregistrement..."
-      );
-
+      setButtonLoading(button, true, "Création...");
 
       try {
+        await api("/api/dossiers", {
+          method: "POST",
+          body: JSON.stringify({
+            title,
+            clientEmail,
+            status,
+            priority,
+            dueDate,
+            notes
+          })
+        });
 
-        await api(
-          "/api/dossiers/" +
-          encodeURIComponent(id),
-          {
-            method: "PUT",
-
-            body: JSON.stringify({
-              title,
-              clientEmail,
-              status,
-              notes
-            })
-          }
-        );
-
-
-        closeModal();
+        getEl("dtitle").value = "";
+        getEl("demail").value = "";
+        getEl("dstatus").value = "Nouveau";
+        getEl("dpriority").value = "Normale";
+        getEl("ddate").value = "";
+        getEl("dnotes").value = "";
 
         await refresh();
-
-        showToast(
-          "Le dossier a été mis à jour.",
-          "success"
-        );
-
+        showToast("Le dossier a été créé avec succès.");
       } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
+        showToast(error.message, "error");
       } finally {
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+        setButtonLoading(button, false);
       }
-
     }
 
+    function openDossierDetails(id) {
+      const dossier =
+        allDossiers.find(item => item.id === id);
 
-    /* =========================================
-       SUPPRESSION CLIENTE
-    ========================================= */
-
-    function confirmDeleteClient(id) {
+      if (!dossier) return;
 
       openModal(`
         <div class="modal">
+          <h2 class="pink">📁 ${escapeHtml(dossier.title)}</h2>
 
-          <div class="eyebrow">
-            Attention
+          <div class="details">
+            <div class="detail-card">
+              <strong>Cliente</strong>
+              <div class="small">
+                ${escapeHtml(dossier.client_email || "")}
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <strong>Statut</strong>
+              <div class="small">
+                ${escapeHtml(dossier.status || "Nouveau")}
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <strong>Priorité</strong>
+              <div class="small">
+                ${escapeHtml(dossier.priority || "Normale")}
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <strong>Date prévue</strong>
+              <div class="small">
+                ${formatDate(dossier.due_date)}
+              </div>
+            </div>
+
+            <div class="detail-card">
+              <strong>Notes</strong>
+              <div class="small">
+                ${escapeHtml(dossier.notes || "Aucune note.")}
+              </div>
+            </div>
           </div>
-
-          <h2>Supprimer cette cliente ?</h2>
-
-          <p class="confirm-text">
-            Cette suppression est définitive.
-            Une cliente possédant encore des dossiers
-            ne pourra pas être supprimée.
-          </p>
-
 
           <div class="modal-actions">
-
-            <button
-              type="button"
-              class="secondary"
-              onclick="closeModal()"
-            >
-              Annuler
-            </button>
-
-
-            <button
-              type="button"
-              class="danger"
-              id="deleteClientButton"
-              onclick="deleteClient('${escapeHtml(id)}')"
-            >
-              Supprimer définitivement
-            </button>
-
+            <button type="button"
+              id="closeDetails">Fermer</button>
           </div>
-
         </div>
       `);
 
+      getEl("closeDetails").onclick = closeModal;
     }
 
+    function openEditDossier(id) {
+      const dossier =
+        allDossiers.find(item => item.id === id);
 
-    async function deleteClient(id) {
-
-      const button =
-        getEl("deleteClientButton");
-
-      setButtonLoading(
-        button,
-        true,
-        "Suppression..."
-      );
-
-
-      try {
-
-        await api(
-          "/api/clients/" +
-          encodeURIComponent(id),
-          {
-            method: "DELETE"
-          }
-        );
-
-
-        closeModal();
-
-        await refresh();
-
-        showToast(
-          "La cliente a été supprimée.",
-          "success"
-        );
-
-      } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+      if (!dossier) {
+        showToast("Dossier introuvable.", "error");
+        return;
       }
 
+      openModal(`
+        <div class="modal">
+          <h2 class="pink">Modifier le dossier</h2>
+
+          <label for="editDossierTitle">Titre</label>
+          <input id="editDossierTitle"
+            value="${escapeHtml(dossier.title)}">
+
+          <label for="editDossierEmail">E-mail de la cliente</label>
+          <input id="editDossierEmail" type="email"
+            value="${escapeHtml(dossier.client_email || "")}">
+
+          <div class="form-grid">
+            <div>
+              <label for="editDossierStatus">Statut</label>
+              <select id="editDossierStatus">
+                ${VALID_STATUSES.map(value => `
+                  <option value="${value}"
+                    ${dossier.status === value ? "selected" : ""}>
+                    ${value}
+                  </option>
+                `).join("")}
+              </select>
+            </div>
+
+            <div>
+              <label for="editDossierPriority">Priorité</label>
+              <select id="editDossierPriority">
+                ${VALID_PRIORITIES.map(value => `
+                  <option value="${value}"
+                    ${(dossier.priority || "Normale") === value
+                      ? "selected" : ""}>
+                    ${value}
+                  </option>
+                `).join("")}
+              </select>
+            </div>
+          </div>
+
+          <label for="editDossierDate">Date prévue</label>
+          <input id="editDossierDate" type="date"
+            value="${escapeHtml(dossier.due_date || "")}">
+
+          <label for="editDossierNotes">Notes</label>
+          <textarea id="editDossierNotes">${escapeHtml(
+            dossier.notes || ""
+          )}</textarea>
+
+          <div class="modal-actions">
+            <button class="secondary" type="button"
+              id="cancelModal">Annuler</button>
+
+            <button type="button"
+              id="saveDossierButton">Enregistrer</button>
+          </div>
+        </div>
+      `);
+
+      getEl("cancelModal").onclick = closeModal;
+      getEl("saveDossierButton").onclick =
+        () => saveDossier(id);
     }
 
+    async function saveDossier(id) {
+      const button = getEl("saveDossierButton");
 
-    /* =========================================
-       SUPPRESSION DOSSIER
-    ========================================= */
+      const title = getEl("editDossierTitle").value.trim();
+      const clientEmail = getEl("editDossierEmail").value.trim();
+      const status = getEl("editDossierStatus").value;
+      const priority = getEl("editDossierPriority").value;
+      const dueDate = getEl("editDossierDate").value;
+      const notes = getEl("editDossierNotes").value.trim();
+
+      if (!title || !clientEmail) {
+        showToast(
+          "Le titre et l'e-mail sont obligatoires.",
+          "error"
+        );
+        return;
+      }
+
+      setButtonLoading(button, true, "Enregistrement...");
+
+      try {
+        await api("/api/dossiers/" + encodeURIComponent(id), {
+          method: "PUT",
+          body: JSON.stringify({
+            title,
+            clientEmail,
+            status,
+            priority,
+            dueDate,
+            notes
+          })
+        });
+
+        closeModal();
+        await refresh();
+        showToast("Le dossier a été modifié.");
+      } catch (error) {
+        showToast(error.message, "error");
+      } finally {
+        setButtonLoading(button, false);
+      }
+    }
 
     function confirmDeleteDossier(id) {
-
       openModal(`
         <div class="modal">
-
-          <div class="eyebrow">
-            Attention
-          </div>
-
-          <h2>Supprimer ce dossier ?</h2>
+          <h2 class="pink">Supprimer le dossier ?</h2>
 
           <p class="confirm-text">
-            Cette action supprimera définitivement
-            ce dossier et ne pourra pas être annulée.
+            Cette action supprimera définitivement ce dossier.
+            Elle ne pourra pas être annulée.
           </p>
 
-
           <div class="modal-actions">
+            <button class="secondary" type="button"
+              id="cancelModal">Annuler</button>
 
-            <button
-              type="button"
-              class="secondary"
-              onclick="closeModal()"
-            >
-              Annuler
-            </button>
-
-
-            <button
-              type="button"
-              class="danger"
-              id="deleteDossierButton"
-              onclick="deleteDossier('${escapeHtml(id)}')"
-            >
+            <button class="danger" type="button"
+              id="confirmDeleteDossier">
               Supprimer définitivement
             </button>
-
           </div>
-
         </div>
       `);
 
+      getEl("cancelModal").onclick = closeModal;
+      getEl("confirmDeleteDossier").onclick =
+        () => deleteDossier(id);
     }
-
 
     async function deleteDossier(id) {
+      const button = getEl("confirmDeleteDossier");
 
-      const button =
-        getEl("deleteDossierButton");
-
-      setButtonLoading(
-        button,
-        true,
-        "Suppression..."
-      );
-
+      setButtonLoading(button, true, "Suppression...");
 
       try {
-
-        await api(
-          "/api/dossiers/" +
-          encodeURIComponent(id),
-          {
-            method: "DELETE"
-          }
-        );
-
+        await api("/api/dossiers/" + encodeURIComponent(id), {
+          method: "DELETE"
+        });
 
         closeModal();
-
         await refresh();
-
-        showToast(
-          "Le dossier a été supprimé.",
-          "success"
-        );
-
+        showToast("Le dossier a été supprimé.");
       } catch (error) {
-
-        showToast(
-          error.message,
-          "error"
-        );
-
-        setButtonLoading(
-          button,
-          false
-        );
-
+        showToast(error.message, "error");
+        setButtonLoading(button, false);
       }
-
     }
-
 
     /* =========================================
-       DÉMARRAGE
+       CALENDRIER
     ========================================= */
 
+    function renderCalendar() {
+      const year = calendarDate.getFullYear();
+      const month = calendarDate.getMonth();
+
+      getEl("calendarTitle").textContent =
+        new Intl.DateTimeFormat("fr-BE", {
+          month: "long",
+          year: "numeric"
+        }).format(calendarDate);
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const startOffset =
+        (firstDay.getDay() + 6) % 7;
+
+      const daysInMonth = lastDay.getDate();
+      const today = new Date();
+
+      let html = "";
+
+      for (let i = 0; i < startOffset; i++) {
+        html += '<div class="calendar-day empty-day"></div>';
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const key = dateKey(year, month, day);
+
+        const events = allDossiers.filter(dossier =>
+          dossier.due_date === key
+        );
+
+        const isToday =
+          today.getFullYear() === year &&
+          today.getMonth() === month &&
+          today.getDate() === day;
+
+        html += `
+          <div class="calendar-day ${isToday ? "today" : ""}"
+            data-date="${key}">
+            <div class="day-number">${day}</div>
+
+            ${events.slice(0, 2).map(dossier => `
+              <div class="calendar-event ${
+                dossier.priority === "Urgente" ? "urgent" : ""
+              }">
+                ${escapeHtml(dossier.title)}
+              </div>
+            `).join("")}
+
+            ${events.length > 2
+              ? `<div class="calendar-more">
+                   +${events.length - 2} autre(s)
+                 </div>`
+              : ""}
+          </div>
+        `;
+      }
+
+      getEl("calendarGrid").innerHTML = html;
+    }
+
+    function openCalendarDay(date) {
+      const events = allDossiers.filter(
+        dossier => dossier.due_date === date
+      );
+
+      if (events.length === 0) {
+        openModal(`
+          <div class="modal">
+            <h2 class="pink">📅 ${formatDate(date)}</h2>
+            <p class="confirm-text">
+              Aucun dossier n'est prévu à cette date.
+            </p>
+            <div class="modal-actions">
+              <button id="closeCalendarDay" type="button">
+                Fermer
+              </button>
+            </div>
+          </div>
+        `);
+
+        getEl("closeCalendarDay").onclick = closeModal;
+        return;
+      }
+
+      openModal(`
+        <div class="modal">
+          <h2 class="pink">📅 ${formatDate(date)}</h2>
+
+          ${events.map(dossier => `
+            <div class="detail-card" style="margin-top:10px;">
+              <strong>${escapeHtml(dossier.title)}</strong>
+              <div class="small">
+                ${escapeHtml(dossier.client_email)}
+                · ${escapeHtml(dossier.status)}
+              </div>
+            </div>
+          `).join("")}
+
+          <div class="modal-actions">
+            <button id="closeCalendarDay" type="button">
+              Fermer
+            </button>
+          </div>
+        </div>
+      `);
+
+      getEl("closeCalendarDay").onclick = closeModal;
+    }
+
+    /* =========================================
+       ÉVÉNEMENTS
+    ========================================= */
+
+    getEl("loginButton").addEventListener("click", login);
+
+    getEl("password").addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
+
+    getEl("logoutButton").addEventListener("click", logout);
+    getEl("addClientButton").addEventListener("click", addClient);
+    getEl("addDossierButton").addEventListener("click", addDossier);
+
+    getEl("clientSearch").addEventListener("input", renderClients);
+    getEl("dossierSearch").addEventListener("input", renderDossiers);
+    getEl("statusFilter").addEventListener("change", renderDossiers);
+
+    getEl("prevMonth").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    getEl("nextMonth").addEventListener("click", () => {
+      calendarDate.setMonth(calendarDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    document.addEventListener("click", event => {
+      const actionElement =
+        event.target.closest("[data-action]");
+
+      if (!actionElement) return;
+
+      const action = actionElement.dataset.action;
+      const id = actionElement.dataset.id;
+
+      if (action === "edit-client") openEditClient(id);
+      if (action === "delete-client") confirmDeleteClient(id);
+      if (action === "view-dossier") openDossierDetails(id);
+      if (action === "edit-dossier") openEditDossier(id);
+      if (action === "delete-dossier") confirmDeleteDossier(id);
+    });
+
+    getEl("calendarGrid").addEventListener("click", event => {
+      const day = event.target.closest("[data-date]");
+
+      if (day) {
+        openCalendarDay(day.dataset.date);
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
     if (token) {
-
       showApp();
-
     }
   </script>
-
 </body>
 </html>
