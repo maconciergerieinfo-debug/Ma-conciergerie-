@@ -80,19 +80,7 @@ async function login() {
   }
 }
 function logout(){localStorage.clear();location.reload()}
-async function showApp(){
-  login.classList.add("hidden");
-  app.classList.remove("hidden");
-
-  try {
-    let payload = JSON.parse(atob(token.split(".")[1]));
-    user = payload;
-    username.textContent = user.name || "";
-
-    if(user.role !== "admin"){
-      adminPanel.classList.add("hidden");
-      newDossier.classList.add("hidden");
-    }
+async function showApp(){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");try{let payload=JSON.parse(atob(token.split(".")[1]));user=payload;document.getElementById("username").textContent=user.name||"";if(user.role!=="admin"){document.getElementById("adminPanel").classList.add("hidden");document.getElementById("newDossier").classList.add("hidden")}await refresh()}catch(e){console.error("Erreur lors du chargement :",e);document.getElementById("error").textContent="Connexion réussie, mais les données ne peuvent pas encore être chargées."}}
 
     await refresh();
 
