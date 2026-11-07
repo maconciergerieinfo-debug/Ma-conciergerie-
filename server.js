@@ -142,12 +142,14 @@ app.get("/api/dashboard", auth, async (req, res) => {
       .neq("status", "Terminé");
 
     if (clientsError || dossiersError || ouvertsError) {
-      throw new Error(
-        clientsError?.message ||
-        dossiersError?.message ||
-        ouvertsError?.message
-      );
-    }
+  console.error("Erreur clients :", clientsError);
+  console.error("Erreur dossiers :", dossiersError);
+  console.error("Erreur dossiers ouverts :", ouvertsError);
+
+  return res.status(500).json({
+    error: "Erreur lors du chargement du tableau de bord"
+  });
+}
 
     res.json({
       clients: clients || 0,
