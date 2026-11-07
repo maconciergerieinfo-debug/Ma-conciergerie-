@@ -1,122 +1,300 @@
 const express = require("express");
-const path = require("path");
-const fs = require("fs");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 const JWT_SECRET = process.env.JWT_SECRET || "CHANGE_ME_BEFORE_PRODUCTION";
 const OWNER_EMAIL = process.env.OWNER_EMAIL || "admin@example.com";
 const OWNER_PASSWORD = process.env.OWNER_PASSWORD || "ChangeMoi123!";
-const DATA_DIR = path.join(__dirname, "data");
-const DB_FILE = path.join(DATA_DIR, "database.json");
 
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+// Connexion sécurisée à Supabase.
+// Les vraies valeurs seront ajoutées dans Render, jamais dans GitHub.
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SECRET_KEY) {
+  console.warn("⚠️ Variables Supabase manquantes.");
 }
 
-if (!fs.existsSync(DB_FILE)) {
-  fs.writeFileSync(
-    DB_FILE,
-    JSON.stringify({ users: [], clients: [], dossiers: [] }, null, 2)
-  );
-}
+const supabase = createClient(
+  SUPABASE_URL || "https://placeholder.supabase.co",
+  SUPABASE_SECRET_KEY || "placeholder"
+);
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, ".")));
+app.use(express.static(__dirname));
+
+
+// ===============================
+// UTILISATEUR ADMINISTRATEUR
+// ===============================
+
+// Pour le moment, on conserve l'administratrice dans les variables Render.
+// Plus tard, nous pourrons aussi créer une vraie gestion des comptes.
+async function loginAdmin(email, password) {
+  if (
+    String(email || "").toLowerCase() === OWNER_EMAIL.toLowerCase() &&
+    String(password || "") === OWNER_PASSWORD
+  ) {
+    return {
+      id: "admin-1",
+      email: OWNER_EMAIL.toLowerCase(),
+      role: "admin",
+      name: "Administratrice"
+    };
+  }
+
+  return null;
+}
+
+
+// ===============================
+// SÉCURITÉ
+// ===============================
+
+function auth(req, res, next) {
+  const h = req.headers.authorization || "";
+  const token = h.startsWith("Bearer ") ? h.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ error: "Non authentifiée" });
+  }
+
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: "Session expirée" });
+  }
+}
+
+function admin(req, res, next) {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ error: "Accès réservé" });
+  }
+
+  next();
+}
+
+
+// ===============================
+// CONNEXION
+// ===============================
+
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    const user = await loginAdmin(email, password);
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ error: "E-mail ou mot de passe incorrect" });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name
+      },
+      JWT_SECRET,
+      { expiresIn: "12h" }
+    );
+
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error("Erreur connexion :", error);
+    res.status(500).json({ error: "Erreur lors de la connexion" });
+  }
+});
+
+
+// ===============================
+// TABLEAU DE BORD
+// ===============================
+
+app.get("/api/dashboard", auth, async (req, res) => {
+  try {
+    const { count: clients, error: clientsError } = await supabase
+      .from("clients")
+      .select("*", { count: "exact", head: true });
+
+    const { count: dossiers, error: dossiersError } = await supabase
+      .from("dossiers")
+      .select("*", { count: "exact", head: true });
+
+    const { count: dossiersOuverts, error: ouvertsError } = await supabase
+      .from("dossiers")
+      .select("*", { count: "exact", head: true })
+      .neq("status", "Terminé");
+
+    if (clientsError || dossiersError || ouvertsError) {
+      throw new Error(
+        clientsError?.message ||
+        dossiersError?.message ||
+        ouvertsError?.message
+      );
+    }
+
+    res.json({
+      clients: clients || 0,
+      dossiers: dossiers || 0,
+      dossiersOuverts: dossiersOuverts || 0
+    });
+  } catch (error) {
+    console.error("Erreur dashboard :", error);
+    res.status(500).json({ error: "Impossible de charger le tableau de bord" });
+  }
+});
+
+
+// ===============================
+// CLIENTES
+// ===============================
+
+app.get("/api/clients", auth, admin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("clients")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Erreur clientes :", error);
+    res.status(500).json({ error: "Impossible de charger les clientes" });
+  }
+});
+
+app.post("/api/clients", auth, admin, async (req, res) => {
+  try {
+    const { name, email, phone } = req.body || {};
+
+    if (!name || !email) {
+      return res
+        .status(400)
+        .json({ error: "Nom et e-mail obligatoires" });
+    }
+
+    const client = {
+      id: "c-" + Date.now(),
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : ""
+    };
+
+    const { data, error } = await supabase
+      .from("clients")
+      .insert(client)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        return res
+          .status(400)
+          .json({ error: "Cette cliente existe déjà." });
+      }
+
+      throw error;
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    console.error("Erreur ajout cliente :", error);
+    res.status(500).json({ error: "Impossible d'ajouter la cliente" });
+  }
+});
+
+
+// ===============================
+// DOSSIERS
+// ===============================
+
+app.get("/api/dossiers", auth, async (req, res) => {
+  try {
+    let query = supabase
+      .from("dossiers")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (req.user.role !== "admin") {
+      query = query.eq("client_email", req.user.email);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Erreur dossiers :", error);
+    res.status(500).json({ error: "Impossible de charger les dossiers" });
+  }
+});
+
+app.post("/api/dossiers", auth, admin, async (req, res) => {
+  try {
+    const { title, clientEmail, status, notes } = req.body || {};
+
+    if (!title || !clientEmail) {
+      return res
+        .status(400)
+        .json({ error: "Titre et cliente obligatoires" });
+    }
+
+    const dossier = {
+      id: "d-" + Date.now(),
+      title: String(title).trim(),
+      client_email: String(clientEmail).trim().toLowerCase(),
+      status: status || "Nouveau",
+      notes: notes || ""
+    };
+
+    const { data, error } = await supabase
+      .from("dossiers")
+      .insert(dossier)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.status(201).json(data);
+  } catch (error) {
+    console.error("Erreur ajout dossier :", error);
+    res.status(500).json({ error: "Impossible de créer le dossier" });
+  }
+});
+
+
+// ===============================
+// TEST API
+// ===============================
+
 app.get("/api/test", (req, res) => {
   res.json({ message: "API fonctionne !" });
 });
 
-function loadDB() {
-  if (!fs.existsSync(DB_FILE)) return { users: [], clients: [], dossiers: [] };
-  try { return JSON.parse(fs.readFileSync(DB_FILE, "utf8")); }
-  catch { return { users: [], clients: [], dossiers: [] }; }
-}
-function saveDB(db) { fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2)); }
 
-async function ensureOwner() {
-  const db = loadDB();
+// ===============================
+// DÉMARRAGE
+// ===============================
 
-  // Sécurité : s'assurer que les tableaux existent
-  if (!db.users) db.users = [];
-  if (!db.clients) db.clients = [];
-  if (!db.dossiers) db.dossiers = [];
-
-  const existingUser = db.users.find(
-    u => u.email.toLowerCase() === OWNER_EMAIL.toLowerCase()
-  );
-
-  const passwordHash = await bcrypt.hash(OWNER_PASSWORD, 12);
-
-  if (existingUser) {
-    // Met à jour le mot de passe de l'administratrice
-    existingUser.passwordHash = passwordHash;
-    existingUser.role = "admin";
-    existingUser.name = "Administratrice";
-  } else {
-    // Crée l'administratrice si elle n'existe pas encore
-    db.users.push({
-      id: "admin-1",
-      email: OWNER_EMAIL.toLowerCase(),
-      passwordHash: passwordHash,
-      role: "admin",
-      name: "Administratrice"
-    });
-  }
-
-  saveDB(db);
-}
-function auth(req,res,next) {
-  const h = req.headers.authorization || "";
-  const token = h.startsWith("Bearer ") ? h.slice(7) : null;
-  if (!token) return res.status(401).json({error:"Non authentifiée"});
-  try { req.user = jwt.verify(token, JWT_SECRET); next(); }
-  catch { return res.status(401).json({error:"Session expirée"}); }
-}
-function admin(req,res,next) {
-  if (req.user.role !== "admin") return res.status(403).json({error:"Accès réservé"});
-  next();
-}
-
-app.post("/api/login", async (req,res) => {
-  const {email,password} = req.body || {};
-  const db = loadDB();
-  const user = db.users.find(u => u.email === String(email||"").toLowerCase());
-  if (!user || !(await bcrypt.compare(String(password||""), user.passwordHash)))
-    return res.status(401).json({error:"E-mail ou mot de passe incorrect"});
-  const token = jwt.sign({id:user.id,email:user.email,role:user.role,name:user.name}, JWT_SECRET, {expiresIn:"12h"});
-  res.json({token,user:{name:user.name,email:user.email,role:user.role}});
+app.listen(PORT, () => {
+  console.log(`Ma Conciergerie lancée sur le port ${PORT}`);
 });
-
-app.get("/api/dashboard", auth, (req,res) => {
-  const db=loadDB();
-  res.json({
-    clients: db.clients.length,
-    dossiers: db.dossiers.length,
-    dossiersOuverts: db.dossiers.filter(d=>d.status!=="Terminé").length
-  });
-});
-app.get("/api/clients", auth, admin, (req,res)=>res.json(loadDB().clients));
-app.post("/api/clients", auth, admin, (req,res)=>{
-  const {name,email,phone}=req.body||{};
-  if(!name || !email) return res.status(400).json({error:"Nom et e-mail obligatoires"});
-  const db=loadDB(); const id="c-"+Date.now();
-  db.clients.push({id,name,email,phone:phone||"",createdAt:new Date().toISOString()});
-  saveDB(db); res.status(201).json({id,name,email,phone:phone||""});
-});
-app.get("/api/dossiers", auth, (req,res)=>{
-  const db=loadDB();
-  if(req.user.role==="admin") return res.json(db.dossiers);
-  res.json(db.dossiers.filter(d=>d.clientEmail===req.user.email));
-});
-app.post("/api/dossiers", auth, admin, (req,res)=>{
-  const {title,clientEmail,status,notes}=req.body||{};
-  if(!title || !clientEmail) return res.status(400).json({error:"Titre et cliente obligatoires"});
-  const db=loadDB();
-  const d={id:"d-"+Date.now(),title,clientEmail,status:status||"Nouveau",notes:notes||"",createdAt:new Date().toISOString()};
-  db.dossiers.push(d); saveDB(db); res.status(201).json(d);
-});
-
-ensureOwner().then(()=>app.listen(PORT,()=>console.log(`Ma Conciergerie lancée sur le port ${PORT}`)));
