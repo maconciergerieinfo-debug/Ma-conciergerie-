@@ -7,8 +7,8 @@ const helmet = require("helmet");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
 const crypto = require("crypto");
+const path = require("path");
 const { createClient } = require("@supabase/supabase-js");
-
 
 /* =========================================
    CONFIGURATION
@@ -16,8 +16,7 @@ const { createClient } = require("@supabase/supabase-js");
 
 const app = express();
 
-const PORT =
-  process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
 const {
   JWT_SECRET,
@@ -28,11 +27,6 @@ const {
   FRONTEND_URL
 } = process.env;
 
-
-/* =========================================
-   VÉRIFICATION CONFIGURATION
-========================================= */
-
 const requiredVariables = {
   JWT_SECRET,
   OWNER_EMAIL,
@@ -41,38 +35,29 @@ const requiredVariables = {
   SUPABASE_SECRET_KEY
 };
 
-
 for (const [name, value] of Object.entries(requiredVariables)) {
-
   if (!value) {
-
     console.error(
       `❌ Variable d'environnement manquante : ${name}`
     );
-
     process.exit(1);
-
   }
-
 }
-
 
 /* =========================================
    SUPABASE
 ========================================= */
 
-const supabase =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_SECRET_KEY,
-    {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false
-      }
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_SECRET_KEY,
+  {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false
     }
-  );
-
+  }
+);
 
 /* =========================================
    CONSTANTES
@@ -85,6 +70,12 @@ const VALID_STATUSES = [
   "Terminé"
 ];
 
+const VALID_PRIORITIES = [
+  "Basse",
+  "Normale",
+  "Haute",
+  "Urgente"
+];
 
 /* =========================================
    SÉCURITÉ
@@ -92,39 +83,22 @@ const VALID_STATUSES = [
 
 app.disable("x-powered-by");
 
-
 app.use(
   helmet({
     crossOriginResourcePolicy: false
   })
 );
 
-
-/*
-  CORS :
-  Si FRONTEND_URL est défini, seul ce domaine
-  pourra appeler l'API depuis un navigateur.
-
-  Les requêtes sans origin restent autorisées
-  pour les outils serveur et les tests.
-*/
-
-const allowedOrigins =
-  [
-    FRONTEND_URL,
-    "http://localhost:3000"
-  ].filter(Boolean);
-
+const allowedOrigins = [
+  FRONTEND_URL,
+  "http://localhost:3000",
+  "http://127.0.0.1:3000"
+].filter(Boolean);
 
 app.use(
   cors({
     origin(origin, callback) {
-
       if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.length === 0) {
         return callback(null, true);
       }
 
@@ -135,7 +109,6 @@ app.use(
       return callback(
         new Error("Origine non autorisée.")
       );
-
     },
 
     methods: [
@@ -152,65 +125,39 @@ app.use(
   })
 );
 
-
 app.use(
   express.json({
     limit: "100kb"
   })
 );
 
-
 /* =========================================
    LIMITATION DES REQUÊTES
 ========================================= */
 
-const apiLimiter =
-  rateLimit({
-    windowMs:
-      15 * 60 * 1000,
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error:
+      "Trop de requêtes. Veuillez réessayer dans quelques minutes."
+  }
+});
 
-    max:
-      300,
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    error:
+      "Trop de tentatives de connexion. Réessayez plus tard."
+  }
+});
 
-    standardHeaders:
-      true,
-
-    legacyHeaders:
-      false,
-
-    message: {
-      error:
-        "Trop de requêtes. Veuillez réessayer dans quelques minutes."
-    }
-  });
-
-
-const loginLimiter =
-  rateLimit({
-    windowMs:
-      15 * 60 * 1000,
-
-    max:
-      10,
-
-    standardHeaders:
-      true,
-
-    legacyHeaders:
-      false,
-
-    message: {
-      error:
-        "Trop de tentatives de connexion. Réessayez dans quelques minutes."
-    }
-  });
-
-
-app.use(
-  "/api",
-  apiLimiter
-);
-
+app.use("/api", apiLimiter);
 
 /* =========================================
    FICHIERS STATIQUES
@@ -218,65 +165,60 @@ app.use(
 
 app.use(
   express.static(
-    __dirname
+    path.join(__dirname)
   )
 );
-
 
 /* =========================================
    OUTILS
 ========================================= */
 
 function normalizeEmail(email) {
-
-  return String(
-    email || ""
-  )
+  return String(email || "")
     .trim()
     .toLowerCase();
-
 }
-
 
 function isValidEmail(email) {
-
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     .test(email);
-
 }
 
-
-function sanitizeText(
-  value,
-  maxLength = 5000
-) {
-
-  return String(
-    value || ""
-  )
+function sanitizeText(value, maxLength = 5000) {
+  return String(value || "")
     .trim()
     .slice(0, maxLength);
-
 }
 
+function sanitizeDate(value) {
+  const date = sanitizeText(value, 10);
+
+  if (!date) {
+    return null;
+  }
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return null;
+  }
+
+  const parsed = new Date(`${date}T12:00:00`);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return date;
+}
 
 function createId() {
-
   return crypto.randomUUID();
-
 }
-
 
 /* =========================================
    AUTHENTIFICATION
 ========================================= */
 
-function auth(
-  req,
-  res,
-  next
-) {
-
+function auth(req, res, next) {
   const header =
     req.headers.authorization || "";
 
@@ -285,89 +227,52 @@ function auth(
       ? header.slice(7)
       : null;
 
-
   if (!token) {
-
-    return res
-      .status(401)
-      .json({
-        error:
-          "Veuillez vous connecter."
-      });
-
+    return res.status(401).json({
+      error: "Veuillez vous connecter."
+    });
   }
-
 
   try {
-
-    req.user =
-      jwt.verify(
-        token,
-        JWT_SECRET
-      );
+    req.user = jwt.verify(
+      token,
+      JWT_SECRET
+    );
 
     next();
-
   } catch {
-
-    return res
-      .status(401)
-      .json({
-        error:
-          "Votre session a expiré. Veuillez vous reconnecter."
-      });
-
+    return res.status(401).json({
+      error:
+        "Votre session a expiré. Veuillez vous reconnecter."
+    });
   }
-
 }
 
-
-function admin(
-  req,
-  res,
-  next
-) {
-
-  if (
-    req.user.role !== "admin"
-  ) {
-
-    return res
-      .status(403)
-      .json({
-        error:
-          "Accès réservé à l'administration."
-      });
-
+function admin(req, res, next) {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({
+      error:
+        "Accès réservé à l'administration."
+    });
   }
 
   next();
-
 }
 
-
 /* =========================================
-   CONNEXION ADMIN
+   ADMINISTRATRICE
 ========================================= */
 
-async function loginAdmin(
-  email,
-  password
-) {
-
+async function loginAdmin(email, password) {
   const normalizedEmail =
     normalizeEmail(email);
-
 
   if (
     normalizedEmail !==
     normalizeEmail(OWNER_EMAIL)
   ) {
-
     return null;
-
   }
-
 
   const passwordValid =
     await bcrypt.compare(
@@ -375,71 +280,38 @@ async function loginAdmin(
       OWNER_PASSWORD_HASH
     );
 
-
   if (!passwordValid) {
-
     return null;
-
   }
 
-
   return {
-
-    id:
-      "admin",
-
-    email:
-      normalizeEmail(
-        OWNER_EMAIL
-      ),
-
-    role:
-      "admin",
-
-    name:
-      "Administratrice"
-
+    id: "admin",
+    email: normalizeEmail(OWNER_EMAIL),
+    role: "admin",
+    name: "Administratrice"
   };
-
 }
 
-
 /* =========================================
-   ROUTE CONNEXION
+   CONNEXION
 ========================================= */
 
 app.post(
   "/api/login",
   loginLimiter,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const {
         email,
         password
-      } =
-        req.body || {};
+      } = req.body || {};
 
-
-      if (
-        !email ||
-        !password
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Veuillez renseigner votre e-mail et votre mot de passe."
-          });
-
+      if (!email || !password) {
+        return res.status(400).json({
+          error:
+            "Veuillez renseigner votre e-mail et votre mot de passe."
+        });
       }
-
 
       const user =
         await loginAdmin(
@@ -447,68 +319,39 @@ app.post(
           password
         );
 
-
       if (!user) {
-
-        return res
-          .status(401)
-          .json({
-            error:
-              "E-mail ou mot de passe incorrect."
-          });
-
+        return res.status(401).json({
+          error:
+            "E-mail ou mot de passe incorrect."
+        });
       }
 
-
-      const token =
-        jwt.sign(
-          {
-            id:
-              user.id,
-
-            email:
-              user.email,
-
-            role:
-              user.role,
-
-            name:
-              user.name
-          },
-
-          JWT_SECRET,
-
-          {
-            expiresIn:
-              "12h"
-          }
-        );
-
+      const token = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          name: user.name
+        },
+        JWT_SECRET,
+        {
+          expiresIn: "12h"
+        }
+      );
 
       res.json({
         token,
-
         user: {
-          name:
-            user.name,
-
-          email:
-            user.email,
-
-          role:
-            user.role
+          name: user.name,
+          email: user.email,
+          role: user.role
         }
       });
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    TABLEAU DE BORD
@@ -517,187 +360,131 @@ app.post(
 app.get(
   "/api/dashboard",
   auth,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
-      /*
-        ADMIN :
-        voit toutes les statistiques.
-
-        FUTUR COMPTE CLIENT :
-        verra uniquement ses dossiers.
-      */
-
-      if (
-        req.user.role !== "admin"
-      ) {
-
-        const {
-          count: dossiers,
-          error
-        } =
-          await supabase
+      if (req.user.role !== "admin") {
+        const [
+          dossiersResult,
+          ouvertsResult,
+          upcomingResult
+        ] = await Promise.all([
+          supabase
             .from("dossiers")
-            .select(
-              "*",
-              {
-                count:
-                  "exact",
+            .select("*", {
+              count: "exact",
+              head: true
+            })
+            .eq("client_email", req.user.email),
 
-                head:
-                  true
-              }
-            )
-            .eq(
-              "client_email",
-              req.user.email
-            );
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        const {
-          count: dossiersOuverts,
-          error: ouvertsError
-        } =
-          await supabase
+          supabase
             .from("dossiers")
-            .select(
-              "*",
-              {
-                count:
-                  "exact",
+            .select("*", {
+              count: "exact",
+              head: true
+            })
+            .eq("client_email", req.user.email)
+            .neq("status", "Terminé"),
 
-                head:
-                  true
-              }
+          supabase
+            .from("dossiers")
+            .select("*", {
+              count: "exact",
+              head: true
+            })
+            .eq("client_email", req.user.email)
+            .gte(
+              "due_date",
+              new Date().toISOString().slice(0, 10)
             )
-            .eq(
-              "client_email",
-              req.user.email
-            )
-            .neq(
-              "status",
-              "Terminé"
-            );
+            .neq("status", "Terminé")
+        ]);
 
-
-        if (ouvertsError) {
-          throw ouvertsError;
+        if (
+          dossiersResult.error ||
+          ouvertsResult.error ||
+          upcomingResult.error
+        ) {
+          throw (
+            dossiersResult.error ||
+            ouvertsResult.error ||
+            upcomingResult.error
+          );
         }
-
 
         return res.json({
           clients: 0,
-
-          dossiers:
-            dossiers || 0,
-
-          dossiersOuverts:
-            dossiersOuverts || 0
+          dossiers: dossiersResult.count || 0,
+          dossiersOuverts: ouvertsResult.count || 0,
+          dossiersAVenir: upcomingResult.count || 0
         });
-
       }
-
 
       const [
         clientsResult,
         dossiersResult,
-        ouvertsResult
-      ] =
-        await Promise.all([
+        ouvertsResult,
+        upcomingResult
+      ] = await Promise.all([
+        supabase
+          .from("clients")
+          .select("*", {
+            count: "exact",
+            head: true
+          }),
 
-          supabase
-            .from("clients")
-            .select(
-              "*",
-              {
-                count:
-                  "exact",
+        supabase
+          .from("dossiers")
+          .select("*", {
+            count: "exact",
+            head: true
+          }),
 
-                head:
-                  true
-              }
-            ),
+        supabase
+          .from("dossiers")
+          .select("*", {
+            count: "exact",
+            head: true
+          })
+          .neq("status", "Terminé"),
 
-          supabase
-            .from("dossiers")
-            .select(
-              "*",
-              {
-                count:
-                  "exact",
-
-                head:
-                  true
-              }
-            ),
-
-          supabase
-            .from("dossiers")
-            .select(
-              "*",
-              {
-                count:
-                  "exact",
-
-                head:
-                  true
-              }
-            )
-            .neq(
-              "status",
-              "Terminé"
-            )
-
-        ]);
-
+        supabase
+          .from("dossiers")
+          .select("*", {
+            count: "exact",
+            head: true
+          })
+          .gte(
+            "due_date",
+            new Date().toISOString().slice(0, 10)
+          )
+          .neq("status", "Terminé")
+      ]);
 
       if (
         clientsResult.error ||
         dossiersResult.error ||
-        ouvertsResult.error
+        ouvertsResult.error ||
+        upcomingResult.error
       ) {
-
         throw (
           clientsResult.error ||
           dossiersResult.error ||
-          ouvertsResult.error
+          ouvertsResult.error ||
+          upcomingResult.error
         );
-
       }
 
-
       res.json({
-
-        clients:
-          clientsResult.count || 0,
-
-        dossiers:
-          dossiersResult.count || 0,
-
-        dossiersOuverts:
-          ouvertsResult.count || 0
-
+        clients: clientsResult.count || 0,
+        dossiers: dossiersResult.count || 0,
+        dossiersOuverts: ouvertsResult.count || 0,
+        dossiersAVenir: upcomingResult.count || 0
       });
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    CLIENTES - LISTE
@@ -707,48 +494,26 @@ app.get(
   "/api/clients",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const {
         data,
         error
-      } =
-        await supabase
-          .from("clients")
-          .select("*")
-          .order(
-            "created_at",
-            {
-              ascending:
-                false
-            }
-          );
+      } = await supabase
+        .from("clients")
+        .select("*")
+        .order("created_at", {
+          ascending: false
+        });
 
+      if (error) throw error;
 
-      if (error) {
-        throw error;
-      }
-
-
-      res.json(
-        data || []
-      );
-
+      res.json(data || []);
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    CLIENTES - AJOUT
@@ -758,127 +523,68 @@ app.post(
   "/api/clients",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const {
         name,
         email,
         phone
-      } =
-        req.body || {};
-
+      } = req.body || {};
 
       const cleanName =
-        sanitizeText(
-          name,
-          120
-        );
+        sanitizeText(name, 120);
 
       const cleanEmail =
-        normalizeEmail(
-          email
-        );
+        normalizeEmail(email);
 
       const cleanPhone =
-        sanitizeText(
-          phone,
-          40
-        );
+        sanitizeText(phone, 40);
 
-
-      if (
-        !cleanName ||
-        !cleanEmail
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Le nom et l'e-mail sont obligatoires."
-          });
-
+      if (!cleanName || !cleanEmail) {
+        return res.status(400).json({
+          error:
+            "Le nom et l'e-mail sont obligatoires."
+        });
       }
 
-
-      if (
-        !isValidEmail(
-          cleanEmail
-        )
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "L'adresse e-mail n'est pas valide."
-          });
-
+      if (!isValidEmail(cleanEmail)) {
+        return res.status(400).json({
+          error:
+            "L'adresse e-mail n'est pas valide."
+        });
       }
-
 
       const {
         data,
         error
-      } =
-        await supabase
-          .from("clients")
-          .insert({
-            id:
-              createId(),
-
-            name:
-              cleanName,
-
-            email:
-              cleanEmail,
-
-            phone:
-              cleanPhone
-          })
-          .select()
-          .single();
-
+      } = await supabase
+        .from("clients")
+        .insert({
+          id: createId(),
+          name: cleanName,
+          email: cleanEmail,
+          phone: cleanPhone
+        })
+        .select()
+        .single();
 
       if (error) {
-
-        if (
-          error.code === "23505"
-        ) {
-
-          return res
-            .status(409)
-            .json({
-              error:
-                "Une cliente utilise déjà cette adresse e-mail."
-            });
-
+        if (error.code === "23505") {
+          return res.status(409).json({
+            error:
+              "Une cliente utilise déjà cette adresse e-mail."
+          });
         }
 
         throw error;
-
       }
 
-
-      res
-        .status(201)
-        .json(data);
-
+      res.status(201).json(data);
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    CLIENTES - MODIFICATION
@@ -888,187 +594,104 @@ app.put(
   "/api/clients/:id",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const id =
-        sanitizeText(
-          req.params.id,
-          100
-        );
+        sanitizeText(req.params.id, 100);
 
       const {
         name,
         email,
         phone
-      } =
-        req.body || {};
-
+      } = req.body || {};
 
       const cleanName =
-        sanitizeText(
-          name,
-          120
-        );
+        sanitizeText(name, 120);
 
       const cleanEmail =
-        normalizeEmail(
-          email
-        );
+        normalizeEmail(email);
 
       const cleanPhone =
-        sanitizeText(
-          phone,
-          40
-        );
-
+        sanitizeText(phone, 40);
 
       if (
         !cleanName ||
-        !isValidEmail(
-          cleanEmail
-        )
+        !isValidEmail(cleanEmail)
       ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Veuillez fournir un nom et une adresse e-mail valide."
-          });
-
+        return res.status(400).json({
+          error:
+            "Veuillez fournir un nom et une adresse e-mail valide."
+        });
       }
-
-
-      /*
-        Récupération de la cliente actuelle.
-        Cela permet de synchroniser les dossiers
-        si son adresse e-mail change.
-      */
 
       const {
         data: existingClient,
         error: existingError
-      } =
-        await supabase
-          .from("clients")
-          .select("id, email")
-          .eq(
-            "id",
-            id
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("clients")
+        .select("id, email")
+        .eq("id", id)
+        .maybeSingle();
 
-
-      if (existingError) {
-        throw existingError;
-      }
-
+      if (existingError) throw existingError;
 
       if (!existingClient) {
-
-        return res
-          .status(404)
-          .json({
-            error:
-              "Cliente introuvable."
-          });
-
+        return res.status(404).json({
+          error: "Cliente introuvable."
+        });
       }
-
 
       const {
         data,
         error
-      } =
-        await supabase
-          .from("clients")
-          .update({
-            name:
-              cleanName,
-
-            email:
-              cleanEmail,
-
-            phone:
-              cleanPhone
-          })
-          .eq(
-            "id",
-            id
-          )
-          .select()
-          .single();
-
+      } = await supabase
+        .from("clients")
+        .update({
+          name: cleanName,
+          email: cleanEmail,
+          phone: cleanPhone
+        })
+        .eq("id", id)
+        .select()
+        .single();
 
       if (error) {
-
-        if (
-          error.code === "23505"
-        ) {
-
-          return res
-            .status(409)
-            .json({
-              error:
-                "Une cliente utilise déjà cette adresse e-mail."
-            });
-
+        if (error.code === "23505") {
+          return res.status(409).json({
+            error:
+              "Une cliente utilise déjà cette adresse e-mail."
+          });
         }
 
         throw error;
-
       }
 
-
-      /*
-        Si l'e-mail a changé, on met également
-        à jour les dossiers existants.
-      */
-
       if (
-        existingClient.email !==
-        cleanEmail
+        existingClient.email !== cleanEmail
       ) {
-
         const {
           error: dossiersError
-        } =
-          await supabase
-            .from("dossiers")
-            .update({
-              client_email:
-                cleanEmail
-            })
-            .eq(
-              "client_email",
-              existingClient.email
-            );
-
+        } = await supabase
+          .from("dossiers")
+          .update({
+            client_email: cleanEmail
+          })
+          .eq(
+            "client_email",
+            existingClient.email
+          );
 
         if (dossiersError) {
           throw dossiersError;
         }
-
       }
 
-
       res.json(data);
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    CLIENTES - SUPPRESSION
@@ -1078,127 +701,70 @@ app.delete(
   "/api/clients/:id",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const id =
-        sanitizeText(
-          req.params.id,
-          100
-        );
-
+        sanitizeText(req.params.id, 100);
 
       const {
         data: client,
         error: clientError
-      } =
-        await supabase
-          .from("clients")
-          .select("id, email")
-          .eq(
-            "id",
-            id
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("clients")
+        .select("id, email")
+        .eq("id", id)
+        .maybeSingle();
 
-
-      if (clientError) {
-        throw clientError;
-      }
-
+      if (clientError) throw clientError;
 
       if (!client) {
-
-        return res
-          .status(404)
-          .json({
-            error:
-              "Cliente introuvable."
-          });
-
+        return res.status(404).json({
+          error: "Cliente introuvable."
+        });
       }
-
 
       const {
         count,
         error: dossiersError
-      } =
-        await supabase
-          .from("dossiers")
-          .select(
-            "*",
-            {
-              count:
-                "exact",
+      } = await supabase
+        .from("dossiers")
+        .select("*", {
+          count: "exact",
+          head: true
+        })
+        .eq(
+          "client_email",
+          client.email
+        );
 
-              head:
-                true
-            }
-          )
-          .eq(
-            "client_email",
-            client.email
-          );
+      if (dossiersError) throw dossiersError;
 
-
-      if (dossiersError) {
-        throw dossiersError;
+      if ((count || 0) > 0) {
+        return res.status(409).json({
+          error:
+            "Impossible de supprimer cette cliente car elle possède encore des dossiers."
+        });
       }
-
-
-      if (
-        (count || 0) > 0
-      ) {
-
-        return res
-          .status(409)
-          .json({
-            error:
-              "Impossible de supprimer cette cliente car elle possède encore des dossiers."
-          });
-
-      }
-
 
       const {
         error
-      } =
-        await supabase
-          .from("clients")
-          .delete()
-          .eq(
-            "id",
-            id
-          );
+      } = await supabase
+        .from("clients")
+        .delete()
+        .eq("id", id);
 
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
 
       res.json({
-        success:
-          true,
-
+        success: true,
         message:
           "Cliente supprimée définitivement."
       });
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    DOSSIERS - LISTE
@@ -1207,66 +773,39 @@ app.delete(
 app.get(
   "/api/dossiers",
   auth,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
+      let query = supabase
+        .from("dossiers")
+        .select("*")
+        .order("due_date", {
+          ascending: true,
+          nullsFirst: false
+        })
+        .order("created_at", {
+          ascending: false
+        });
 
-      let query =
-        supabase
-          .from("dossiers")
-          .select("*")
-          .order(
-            "created_at",
-            {
-              ascending:
-                false
-            }
-          );
-
-
-      if (
-        req.user.role !==
-        "admin"
-      ) {
-
-        query =
-          query.eq(
-            "client_email",
-            req.user.email
-          );
-
+      if (req.user.role !== "admin") {
+        query = query.eq(
+          "client_email",
+          req.user.email
+        );
       }
-
 
       const {
         data,
         error
-      } =
-        await query;
+      } = await query;
 
+      if (error) throw error;
 
-      if (error) {
-        throw error;
-      }
-
-
-      res.json(
-        data || []
-      );
-
+      res.json(data || []);
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    DOSSIERS - AJOUT
@@ -1276,157 +815,105 @@ app.post(
   "/api/dossiers",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const {
         title,
         clientEmail,
         status,
+        priority,
+        dueDate,
         notes
-      } =
-        req.body || {};
-
+      } = req.body || {};
 
       const cleanTitle =
-        sanitizeText(
-          title,
-          200
-        );
+        sanitizeText(title, 200);
 
       const cleanEmail =
-        normalizeEmail(
-          clientEmail
-        );
+        normalizeEmail(clientEmail);
 
       const cleanStatus =
         VALID_STATUSES.includes(status)
           ? status
           : "Nouveau";
 
+      const cleanPriority =
+        VALID_PRIORITIES.includes(priority)
+          ? priority
+          : "Normale";
+
+      const cleanDate =
+        dueDate
+          ? sanitizeDate(dueDate)
+          : null;
+
       const cleanNotes =
-        sanitizeText(
-          notes,
-          5000
-        );
+        sanitizeText(notes, 5000);
 
-
-      if (
-        !cleanTitle ||
-        !cleanEmail
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Le titre et l'adresse e-mail de la cliente sont obligatoires."
-          });
-
+      if (!cleanTitle || !cleanEmail) {
+        return res.status(400).json({
+          error:
+            "Le titre et l'adresse e-mail de la cliente sont obligatoires."
+        });
       }
 
-
-      if (
-        !isValidEmail(
-          cleanEmail
-        )
-      ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "L'adresse e-mail de la cliente n'est pas valide."
-          });
-
+      if (!isValidEmail(cleanEmail)) {
+        return res.status(400).json({
+          error:
+            "L'adresse e-mail de la cliente n'est pas valide."
+        });
       }
 
-
-      /*
-        Vérifie que la cliente existe.
-        Cela évite la création de dossiers orphelins.
-      */
+      if (dueDate && !cleanDate) {
+        return res.status(400).json({
+          error:
+            "La date prévue n'est pas valide."
+        });
+      }
 
       const {
         data: client,
         error: clientError
-      } =
-        await supabase
-          .from("clients")
-          .select("id")
-          .eq(
-            "email",
-            cleanEmail
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("clients")
+        .select("id")
+        .eq("email", cleanEmail)
+        .maybeSingle();
 
-
-      if (clientError) {
-        throw clientError;
-      }
-
+      if (clientError) throw clientError;
 
       if (!client) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Cette adresse e-mail ne correspond à aucune cliente enregistrée."
-          });
-
+        return res.status(400).json({
+          error:
+            "Cette adresse e-mail ne correspond à aucune cliente enregistrée."
+        });
       }
-
 
       const {
         data,
         error
-      } =
-        await supabase
-          .from("dossiers")
-          .insert({
-            id:
-              createId(),
+      } = await supabase
+        .from("dossiers")
+        .insert({
+          id: createId(),
+          title: cleanTitle,
+          client_email: cleanEmail,
+          status: cleanStatus,
+          priority: cleanPriority,
+          due_date: cleanDate,
+          notes: cleanNotes
+        })
+        .select()
+        .single();
 
-            title:
-              cleanTitle,
+      if (error) throw error;
 
-            client_email:
-              cleanEmail,
-
-            status:
-              cleanStatus,
-
-            notes:
-              cleanNotes
-          })
-          .select()
-          .single();
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      res
-        .status(201)
-        .json(data);
-
+      res.status(201).json(data);
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    DOSSIERS - MODIFICATION
@@ -1436,179 +923,123 @@ app.put(
   "/api/dossiers/:id",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const id =
-        sanitizeText(
-          req.params.id,
-          100
-        );
+        sanitizeText(req.params.id, 100);
 
       const {
         title,
         clientEmail,
         status,
+        priority,
+        dueDate,
         notes
-      } =
-        req.body || {};
-
+      } = req.body || {};
 
       const cleanTitle =
-        sanitizeText(
-          title,
-          200
-        );
+        sanitizeText(title, 200);
 
       const cleanEmail =
-        normalizeEmail(
-          clientEmail
-        );
+        normalizeEmail(clientEmail);
 
       const cleanStatus =
         VALID_STATUSES.includes(status)
           ? status
           : null;
 
-      const cleanNotes =
-        sanitizeText(
-          notes,
-          5000
-        );
+      const cleanPriority =
+        VALID_PRIORITIES.includes(priority)
+          ? priority
+          : null;
 
+      const cleanDate =
+        dueDate
+          ? sanitizeDate(dueDate)
+          : null;
+
+      const cleanNotes =
+        sanitizeText(notes, 5000);
 
       if (
         !cleanTitle ||
-        !isValidEmail(
-          cleanEmail
-        ) ||
-        !cleanStatus
+        !isValidEmail(cleanEmail) ||
+        !cleanStatus ||
+        !cleanPriority
       ) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Veuillez vérifier le titre, l'adresse e-mail et le statut."
-          });
-
+        return res.status(400).json({
+          error:
+            "Veuillez vérifier les informations du dossier."
+        });
       }
 
+      if (dueDate && !cleanDate) {
+        return res.status(400).json({
+          error:
+            "La date prévue n'est pas valide."
+        });
+      }
 
       const {
         data: existingDossier,
         error: existingError
-      } =
-        await supabase
-          .from("dossiers")
-          .select("id")
-          .eq(
-            "id",
-            id
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("dossiers")
+        .select("id")
+        .eq("id", id)
+        .maybeSingle();
 
-
-      if (existingError) {
-        throw existingError;
-      }
-
+      if (existingError) throw existingError;
 
       if (!existingDossier) {
-
-        return res
-          .status(404)
-          .json({
-            error:
-              "Dossier introuvable."
-          });
-
+        return res.status(404).json({
+          error: "Dossier introuvable."
+        });
       }
-
-
-      /*
-        Vérifie que la nouvelle cliente existe.
-      */
 
       const {
         data: client,
         error: clientError
-      } =
-        await supabase
-          .from("clients")
-          .select("id")
-          .eq(
-            "email",
-            cleanEmail
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("clients")
+        .select("id")
+        .eq("email", cleanEmail)
+        .maybeSingle();
 
-
-      if (clientError) {
-        throw clientError;
-      }
-
+      if (clientError) throw clientError;
 
       if (!client) {
-
-        return res
-          .status(400)
-          .json({
-            error:
-              "Cette adresse e-mail ne correspond à aucune cliente enregistrée."
-          });
-
+        return res.status(400).json({
+          error:
+            "Cette adresse e-mail ne correspond à aucune cliente enregistrée."
+        });
       }
-
 
       const {
         data,
         error
-      } =
-        await supabase
-          .from("dossiers")
-          .update({
-            title:
-              cleanTitle,
+      } = await supabase
+        .from("dossiers")
+        .update({
+          title: cleanTitle,
+          client_email: cleanEmail,
+          status: cleanStatus,
+          priority: cleanPriority,
+          due_date: cleanDate,
+          notes: cleanNotes
+        })
+        .eq("id", id)
+        .select()
+        .single();
 
-            client_email:
-              cleanEmail,
-
-            status:
-              cleanStatus,
-
-            notes:
-              cleanNotes
-          })
-          .eq(
-            "id",
-            id
-          )
-          .select()
-          .single();
-
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
 
       res.json(data);
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    DOSSIERS - SUPPRESSION
@@ -1618,86 +1049,47 @@ app.delete(
   "/api/dossiers/:id",
   auth,
   admin,
-  async (
-    req,
-    res,
-    next
-  ) => {
-
+  async (req, res, next) => {
     try {
-
       const id =
-        sanitizeText(
-          req.params.id,
-          100
-        );
-
+        sanitizeText(req.params.id, 100);
 
       const {
         data: dossier,
         error: findError
-      } =
-        await supabase
-          .from("dossiers")
-          .select("id")
-          .eq(
-            "id",
-            id
-          )
-          .maybeSingle();
+      } = await supabase
+        .from("dossiers")
+        .select("id")
+        .eq("id", id)
+        .maybeSingle();
 
-
-      if (findError) {
-        throw findError;
-      }
-
+      if (findError) throw findError;
 
       if (!dossier) {
-
-        return res
-          .status(404)
-          .json({
-            error:
-              "Dossier introuvable."
-          });
-
+        return res.status(404).json({
+          error: "Dossier introuvable."
+        });
       }
-
 
       const {
         error
-      } =
-        await supabase
-          .from("dossiers")
-          .delete()
-          .eq(
-            "id",
-            id
-          );
+      } = await supabase
+        .from("dossiers")
+        .delete()
+        .eq("id", id);
 
-
-      if (error) {
-        throw error;
-      }
-
+      if (error) throw error;
 
       res.json({
-        success:
-          true,
-
+        success: true,
         message:
           "Dossier supprimé définitivement."
       });
-
     } catch (error) {
-
       next(error);
-
     }
-
   }
 );
-
 
 /* =========================================
    TEST API
@@ -1705,88 +1097,55 @@ app.delete(
 
 app.get(
   "/api/test",
-  (
-    req,
-    res
-  ) => {
-
+  (req, res) => {
     res.json({
-      success:
-        true,
-
+      success: true,
       message:
         "API Ma Conciergerie fonctionne correctement."
     });
-
   }
 );
 
+/* =========================================
+   ROUTES API INCONNUES
+========================================= */
+
+app.use(
+  "/api",
+  (req, res) => {
+    res.status(404).json({
+      error: "Route API introuvable."
+    });
+  }
+);
 
 /* =========================================
    GESTION DES ERREURS
 ========================================= */
 
 app.use(
-  (
-    error,
-    req,
-    res,
-    next
-  ) => {
-
+  (error, req, res, next) => {
     console.error(
       "Erreur serveur :",
       error
     );
 
-
     if (
       error.message ===
       "Origine non autorisée."
     ) {
-
-      return res
-        .status(403)
-        .json({
-          error:
-            "Cette origine n'est pas autorisée."
-        });
-
+      return res.status(403).json({
+        error:
+          "Cette origine n'est pas autorisée."
+      });
     }
 
-
-    res
-      .status(500)
-      .json({
-        error:
-          "Une erreur interne est survenue."
-      });
-
+    res.status(500).json({
+      error:
+        "Une erreur interne est survenue."
+    });
   }
 );
-
-
-/* =========================================
-   ROUTES INCONNUES API
-========================================= */
-
-app.use(
-  "/api",
-  (
-    req,
-    res
-  ) => {
-
-    res
-      .status(404)
-      .json({
-        error:
-          "Route API introuvable."
-      });
-
-  }
-);
-
 
 /* =========================================
    DÉMARRAGE
@@ -1795,10 +1154,8 @@ app.use(
 app.listen(
   PORT,
   () => {
-
     console.log(
       `🌸 Ma Conciergerie est lancée sur le port ${PORT}`
     );
-
   }
 );
