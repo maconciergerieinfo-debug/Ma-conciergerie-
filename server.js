@@ -223,6 +223,51 @@ app.post("/api/clients", auth, admin, async (req, res) => {
   }
 });
 
+// ===============================
+// MODIFIER UNE CLIENTE
+// ===============================
+
+app.put("/api/clients/:id", auth, admin, async (req, res) => {
+  try {
+    const { name, email, phone } = req.body || {};
+    const { id } = req.params;
+
+    if (!name || !email) {
+      return res.status(400).json({
+        error: "Le nom et l'e-mail sont obligatoires."
+      });
+    }
+
+    const updatedClient = {
+      name: String(name).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : ""
+    };
+
+    const { data, error } = await supabase
+      .from("clients")
+      .update(updatedClient)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        return res.status(400).json({
+          error: "Une cliente utilise déjà cette adresse e-mail."
+        });
+      }
+      throw error;
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Erreur modification cliente :", error);
+    res.status(500).json({
+      error: "Impossible de modifier la cliente."
+    });
+  }
+});
 
 // ===============================
 // DOSSIERS
@@ -283,6 +328,45 @@ app.post("/api/dossiers", auth, admin, async (req, res) => {
   }
 });
 
+// ===============================
+// MODIFIER UN DOSSIER
+// ===============================
+
+app.put("/api/dossiers/:id", auth, admin, async (req, res) => {
+  try {
+    const { title, clientEmail, status, notes } = req.body || {};
+    const { id } = req.params;
+
+    if (!title || !clientEmail) {
+      return res.status(400).json({
+        error: "Le titre et l'e-mail de la cliente sont obligatoires."
+      });
+    }
+
+    const updatedDossier = {
+      title: String(title).trim(),
+      client_email: String(clientEmail).trim().toLowerCase(),
+      status: String(status || "Nouveau"),
+      notes: notes ? String(notes).trim() : ""
+    };
+
+    const { data, error } = await supabase
+      .from("dossiers")
+      .update(updatedDossier)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error("Erreur modification dossier :", error);
+    res.status(500).json({
+      error: "Impossible de modifier le dossier."
+    });
+  }
+});
 
 // ===============================
 // TEST API
