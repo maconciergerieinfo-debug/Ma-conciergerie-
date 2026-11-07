@@ -80,20 +80,27 @@ async function login() {
   }
 }
 function logout(){localStorage.clear();location.reload()}
-async function showApp() {
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
+async function showApp(){
+  login.classList.add("hidden");
+  app.classList.remove("hidden");
 
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    let payload = JSON.parse(atob(token.split(".")[1]));
     user = payload;
+    username.textContent = user.name || "";
 
-    document.getElementById("username").textContent = user.name || "";
-
-    if (user.role !== "admin") {
-      document.getElementById("adminPanel").classList.add("hidden");
-      document.getElementById("newDossier").classList.add("hidden");
+    if(user.role !== "admin"){
+      adminPanel.classList.add("hidden");
+      newDossier.classList.add("hidden");
     }
+
+    await refresh();
+
+  } catch(e) {
+    console.error("Erreur lors du chargement :", e);
+    alert("Connexion réussie, mais certaines données n'ont pas pu être chargées. Nous allons corriger cela.");
+  }
+}
 
     await refresh();
   } catch (e) {
