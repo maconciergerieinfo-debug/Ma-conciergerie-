@@ -367,6 +367,88 @@ app.put("/api/dossiers/:id", auth, admin, async (req, res) => {
     });
   }
 });
+// ===============================
+// SUPPRIMER UNE CLIENTE
+// ===============================
+
+app.delete("/api/clients/:id", auth, admin, async (req, res) => {
+  try {
+    // On récupère d'abord la cliente pour connaître son e-mail.
+    const { data: client, error: clientError } = await supabase
+      .from("clients")
+      .select("email")
+      .eq("id", req.params.id)
+      .single();
+
+    if (clientError || !client) {
+      return res.status(404).json({
+        error: "Cliente introuvable."
+      });
+    }
+
+    // Sécurité : on vérifie si des dossiers sont encore liés à cette cliente.
+    const { data: dossiers, error: dossiersError } = await supabase
+      .from("dossiers")
+      .select("id")
+      .eq("client_email", client.email);
+
+    if (dossiersError) throw dossiersError;
+
+    if (dossiers && dossiers.length > 0) {
+      return res.status(400).json({
+        error: "Impossible de supprimer cette cliente car elle possède encore des dossiers."
+      });
+    }
+
+    // Suppression définitive.
+    const { error } = await supabase
+      .from("clients")
+      .delete()
+      .eq("id", req.params.id);
+
+    if (error) throw error;
+
+    res.json({
+      success: true,
+      message: "Cliente supprimée définitivement."
+    });
+
+  } catch (error) {
+    console.error("Erreur suppression cliente :", error);
+
+    res.status(500).json({
+      error: "Impossible de supprimer la cliente."
+    });
+  }
+});
+
+
+// ===============================
+// SUPPRIMER UN DOSSIER
+// ===============================
+
+app.delete("/api/dossiers/:id", auth, admin, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from("dossiers")
+      .delete()
+      .eq("id", req.params.id);
+
+    if (error) throw error;
+
+    res.json({
+      success: true,
+      message: "Dossier supprimé définitivement."
+    });
+
+  } catch (error) {
+    console.error("Erreur suppression dossier :", error);
+
+    res.status(500).json({
+      error: "Impossible de supprimer le dossier."
+    });
+  }
+});
 
 // ===============================
 // TEST API
