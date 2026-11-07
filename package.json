@@ -1,13 +1,13 @@
 {
   "name": "ma-conciergerie",
   "version": "1.0.0",
-  "description": "Application de gestion - Ma Conciergerie Auto & Maison",
+  "description": "Application de gestion Ma Conciergerie",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/supabase-js": "^2.49.4",
     "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
