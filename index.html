@@ -103,7 +103,120 @@ async function showApp() {
       "Connexion réussie, mais les données n'ont pas pu être chargées.";
   }
 }
-async function refresh(){let d=await api("/api/dashboard");clientsCount.textContent=d.clients;dossiersCount.textContent=d.dossiers;openCount.textContent=d.dossiersOuverts;let ds=await api("/api/dossiers");dossiersList.innerHTML="<h3>Mes dossiers</h3>"+(ds.length?ds.map(x=>`<div class="row"><b>${x.title}</b> · ${x.status}<br><span class="small">${x.clientEmail}</span></div>`).join(""):"<p class='small'>Aucun dossier pour le moment.</p>");if(user.role==="admin"){let cs=await api("/api/clients");clientsList.innerHTML=cs.length?cs.map(x=>`<div class="row"><b>${x.name}</b><br><span class="small">${x.email} · ${x.phone||""}</span></div>`).join(""):"<p class='small'>Aucune cliente pour le moment.</p>"}}
+async function refresh() {
+  const d = await api("/api/dashboard");
+
+  clientsCount.textContent = d.clients;
+  dossiersCount.textContent = d.dossiers;
+  openCount.textContent = d.dossiersOuverts;
+
+  const ds = await api("/api/dossiers");
+
+  dossiersList.innerHTML =
+    "<h3>Mes dossiers</h3>" +
+    (ds.length
+      ? ds.map(x => `
+        <div class="row">
+          <b>${x.title}</b> · ${x.status}<br>
+          <span class="small">${x.client_email || x.clientEmail || ""}</span><br>
+          ${user.role === "admin"
+            ? `<button onclick="editDossier('${x.id}')">✏️ Modifier</button>`
+            : ""}
+        </div>
+      `).join("")
+      : "<p class='small'>Aucun dossier pour le moment.</p>");
+
+  if (user.role === "admin") {
+    const cs = await api("/api/clients");
+
+    clientsList.innerHTML = cs.length
+      ? cs.map(x => `
+        <div class="row">
+          <b>${x.name}</b><br>
+          <span class="small">${x.email} · ${x.phone || ""}</span><br>
+          <button onclick="editClient('${x.id}')">✏️ Modifier</button>
+        </div>
+      `).join("")
+      : "<p class='small'>Aucune cliente pour le moment.</p>";
+  }
+}
+async function editClient(id) {
+  try {
+    const clients = await api("/api/clients");
+    const client = clients.find(x => x.id === id);
+
+    if (!client) {
+      alert("Cliente introuvable.");
+      return;
+    }
+
+    const name = prompt("Nom de la cliente :", client.name);
+    if (name === null) return;
+
+    const email = prompt("E-mail de la cliente :", client.email);
+    if (email === null) return;
+
+    const phone = prompt("Téléphone :", client.phone || "");
+    if (phone === null) return;
+
+    await api("/api/clients/" + id, {
+      method: "PUT",
+      body: JSON.stringify({ name, email, phone })
+    });
+
+    await refresh();
+    alert("✅ Cliente modifiée avec succès.");
+
+  } catch (e) {
+    alert("Erreur : " + e.message);
+  }
+}
+
+async function editDossier(id) {
+  try {
+    const dossiers = await api("/api/dossiers");
+    const dossier = dossiers.find(x => x.id === id);
+
+    if (!dossier) {
+      alert("Dossier introuvable.");
+      return;
+    }
+
+    const title = prompt("Titre du dossier :", dossier.title);
+    if (title === null) return;
+
+    const clientEmail = prompt(
+      "E-mail de la cliente :",
+      dossier.client_email || dossier.clientEmail || ""
+    );
+    if (clientEmail === null) return;
+
+    const status = prompt(
+      "Statut (Nouveau, En cours, En attente ou Terminé) :",
+      dossier.status
+    );
+    if (status === null) return;
+
+    const notes = prompt("Notes :", dossier.notes || "");
+    if (notes === null) return;
+
+    await api("/api/dossiers/" + id, {
+      method: "PUT",
+      body: JSON.stringify({
+        title,
+        clientEmail,
+        status,
+        notes
+      })
+    });
+
+    await refresh();
+    alert("✅ Dossier modifié avec succès.");
+
+  } catch (e) {
+    alert("Erreur : " + e.message);
+  }
+}
 async function addClient(){try{await api("/api/clients",{method:"POST",body:JSON.stringify({name:cname.value,email:cemail.value,phone:cphone.value})});cname.value=cemail.value=cphone.value="";await refresh()}catch(e){alert(e.message)}}
 async function addDossier(){try{await api("/api/dossiers",{method:"POST",body:JSON.stringify({title:dtitle.value,clientEmail:demail.value,status:dstatus.value,notes:dnotes.value})});dtitle.value=demail.value=dnotes.value="";await refresh()}catch(e){alert(e.message)}}
 if(token)showApp();
