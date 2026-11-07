@@ -1,206 +1,952 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ma Conciergerie | Auto & Maison</title>
-<style>
-:root{--pink:#f44f9d;--gold:#e6b64a;--dark:#100b12;--card:#241522}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#351526,#100b12 55%);color:#fff;min-height:100vh}
-.wrap{max-width:900px;margin:auto;padding:24px}.brand{text-align:center}.brand h1{font-family:cursive;font-size:42px;margin:0;color:#fff}.brand h1 span{color:var(--pink)}.tag{color:var(--pink);font-weight:800;font-size:18px}
-.box{background:rgba(36,21,34,.96);border:1px solid rgba(230,182,74,.55);border-radius:24px;padding:22px;margin:22px 0;box-shadow:0 8px 30px #0006}
-h2{margin-top:0;color:#fff}.pink{background:linear-gradient(90deg,#ff75b4,#a30055);padding:10px 18px;border-radius:999px;display:inline-block;color:#fff}
-input,textarea,select{width:100%;padding:14px;margin:7px 0;border-radius:12px;border:1px solid #765164;background:#120d13;color:#fff;font-size:16px}
-button{background:linear-gradient(90deg,var(--pink),#b00062);border:0;border-radius:999px;padding:13px 20px;color:white;font-weight:800;font-size:16px;cursor:pointer}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.stat{padding:20px;border-radius:18px;background:#170f17;border:1px solid #5d344d}.num{font-size:32px;color:var(--gold);font-weight:900}
-.row{padding:14px;border-bottom:1px solid #4c3041}.small{color:#d8c9d1;font-size:14px}.hidden{display:none}.error{color:#ff9bc8;margin-top:10px}
-footer{text-align:center;color:#d9a6bd;padding:15px}.logout{float:right;background:transparent;border:1px solid #9b5476}
-</style></head>
-<body><main class="wrap">
-<div class="brand"><h1>Ma <span>Conciergerie</span></h1><div>Auto <span style="color:#f44f9d">& Maison</span></div><p class="tag">Votre alliée de confiance pour faciliter votre quotidien.</p></div>
-
-<section id="login" class="box"><h2 class="pink">🔐 Connexion</h2><p class="small">Accédez à votre espace Ma Conciergerie.</p>
-<input id="email" type="email" placeholder="Votre e-mail"><input id="password" type="password" placeholder="Votre mot de passe">
-<button onclick="login()">Se connecter</button><div id="error" class="error"></div></section>
-
-<section id="app" class="hidden">
-<button class="logout" onclick="logout()">Déconnexion</button>
-<div class="box"><h2>🌸 Bonjour, <span id="username"></span></h2><div class="grid">
-<div class="stat">CLIENTES<div id="clientsCount" class="num">–</div></div>
-<div class="stat">DOSSIERS<div id="dossiersCount" class="num">–</div></div>
-<div class="stat">EN COURS<div id="openCount" class="num">–</div></div></div></div>
-
-<div class="box" id="adminPanel"><h2 class="pink">👩 Ajouter une cliente</h2>
-<input id="cname" placeholder="Nom de la cliente"><input id="cemail" type="email" placeholder="E-mail"><input id="cphone" placeholder="Téléphone">
-<button onclick="addClient()">Ajouter la cliente</button><h3>Mes clientes</h3><div id="clientsList"></div></div>
-
-<div class="box"><h2 class="pink">📁 Dossiers</h2><div id="newDossier">
-<input id="dtitle" placeholder="Titre du dossier"><input id="demail" placeholder="E-mail de la cliente">
-<select id="dstatus"><option>Nouveau</option><option>En cours</option><option>En attente</option><option>Terminé</option></select>
-<textarea id="dnotes" placeholder="Notes"></textarea><button onclick="addDossier()">Créer le dossier</button></div>
-<div id="dossiersList"></div></div></section>
-<footer>📞 +32 471 83 00 32 · Disponible dans toute la Belgique 🇧🇪</footer>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b12">
+  <title>Ma Conciergerie | Auto & Maison</title>
+  <style>
+    :root {
+      --pink: #f44f9d;
+      --pink-light: #ff75b4;
+      --pink-dark: #a30055;
+      --gold: #e6b64a;
+      --dark: #100b12;
+      --dark-soft: #170f17;
+      --card: #241522;
+      --card-light: #35202f;
+      --line: #5d344d;
+      --text: #ffffff;
+      --text-soft: #d8c9d1;
+      --danger: #c73b60;
+      --success: #63c59a;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top, #3b172b 0%, #21101d 38%, var(--dark) 75%);
+      color: var(--text);
+    }
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+    button {
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wrap {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      padding: 24px;
+    }
+    /* =========================
+       IDENTITÉ
+    ========================= */
+    .brand {
+      text-align: center;
+      padding: 12px 0 4px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-family: cursive;
+      font-size: clamp(38px, 8vw, 52px);
+      line-height: 1;
+      letter-spacing: -.5px;
+    }
+    .brand h1 span {
+      color: var(--pink);
+    }
+    .brand-subtitle {
+      margin-top: 8px;
+      font-size: 17px;
+      letter-spacing: .4px;
+    }
+    .brand-subtitle span {
+      color: var(--pink);
+    }
+    .tag {
+      max-width: 620px;
+      margin: 14px auto 0;
+      color: var(--pink-light);
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.5;
+    }
+    /* =========================
+       CARTES
+    ========================= */
+    .box {
+      position: relative;
+      margin: 22px 0;
+      padding: 22px;
+      background: rgba(36, 21, 34, .96);
+      border: 1px solid rgba(230, 182, 74, .48);
+      border-radius: 24px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .28);
+    }
+    h2 {
+      margin: 0 0 16px;
+    }
+    h3 {
+      margin: 28px 0 12px;
+      font-size: 18px;
+    }
+    .pink {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--pink-light), var(--pink-dark));
+      color: #fff;
+      font-size: 18px;
+      box-shadow: 0 6px 18px rgba(244, 79, 157, .18);
+    }
+    /* =========================
+       FORMULAIRES
+    ========================= */
+    input,
+    textarea,
+    select {
+      width: 100%;
+      margin: 7px 0;
+      padding: 14px;
+      border: 1px solid #765164;
+      border-radius: 13px;
+      outline: none;
+      background: #120d13;
+      color: #fff;
+      font-size: 16px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input::placeholder,
+    textarea::placeholder {
+      color: #9d8490;
+    }
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(244, 79, 157, .12);
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    /* =========================
+       BOUTONS
+    ========================= */
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      background: linear-gradient(90deg, var(--pink), var(--pink-dark));
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(244, 79, 157, .16);
+    }
+    button:active {
+      transform: translateY(0);
+    }
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .secondary {
+      background: transparent;
+      border: 1px solid #765164;
+      color: var(--text-soft);
+    }
+    .danger {
+      background: linear-gradient(90deg, #c73b60, #851d3a);
+    }
+    .logout {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      padding: 9px 14px;
+      background: transparent;
+      border: 1px solid #9b5476;
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+    /* =========================
+       TABLEAU DE BORD
+    ========================= */
+    .dashboard-header {
+      padding-right: 120px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .stat {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--dark-soft);
+      color: var(--text-soft);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .8px;
+    }
+    .num {
+      margin-top: 7px;
+      color: var(--gold);
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    /* =========================
+       LISTES
+    ========================= */
+    .row {
+      position: relative;
+      min-height: 64px;
+      padding: 14px 86px 14px 4px;
+      border-bottom: 1px solid rgba(93, 52, 77, .75);
+    }
+    .row:last-child {
+      border-bottom: 0;
+    }
+    .item-title {
+      display: block;
+      padding-right: 5px;
+      color: #fff;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+    .small {
+      color: var(--text-soft);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .status {
+      display: inline-block;
+      margin: 5px 0 4px;
+      padding: 3px 9px;
+      border: 1px solid rgba(230, 182, 74, .35);
+      border-radius: 999px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .empty {
+      margin: 14px 0 4px;
+      padding: 18px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      color: var(--text-soft);
+      text-align: center;
+    }
+    /* Actions : petites icônes discrètes */
+    .actions {
+      position: absolute;
+      top: 50%;
+      right: 2px;
+      display: flex;
+      gap: 7px;
+      transform: translateY(-50%);
+    }
+    .icon-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border: 1px solid #684057;
+      border-radius: 50%;
+      background: #35202f;
+      color: #fff;
+      font-size: 15px;
+      box-shadow: none;
+    }
+    .icon-btn:hover {
+      background: #4a2940;
+      box-shadow: none;
+    }
+    .delete-btn:hover {
+      background: #6b2039;
+    }
+    /* =========================
+       MODALES
+    ========================= */
+    .hidden {
+      display: none !important;
+    }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(8, 4, 8, .78);
+      backdrop-filter: blur(5px);
+    }
+    .modal {
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 22px;
+      border: 1px solid rgba(230, 182, 74, .58);
+      border-radius: 24px;
+      background: #241522;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
+    }
+    .modal h2 {
+      margin-bottom: 16px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 17px;
+    }
+    .confirm-text {
+      color: var(--text-soft);
+      line-height: 1.6;
+    }
+    /* =========================
+       MESSAGES
+    ========================= */
+    .error {
+      margin-top: 10px;
+      color: #ff9bc8;
+      line-height: 1.4;
+    }
+    .loading {
+      opacity: .7;
+      pointer-events: none;
+    }
+    footer {
+      padding: 18px 10px 28px;
+      color: #d9a6bd;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    /* =========================
+       MOBILE
+    ========================= */
+    @media (max-width: 650px) {
+      .wrap {
+        padding: 15px;
+      }
+      .box {
+        padding: 17px;
+        border-radius: 21px;
+      }
+      .brand {
+        padding-top: 8px;
+      }
+      .tag {
+        font-size: 15px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .stat {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px;
+      }
+      .num {
+        margin: 0;
+        font-size: 30px;
+      }
+      .logout {
+        position: static;
+        width: 100%;
+        margin-bottom: 14px;
+      }
+      .dashboard-header {
+        padding-right: 0;
+      }
+      .modal {
+        padding: 18px;
+        border-radius: 20px;
+      }
+      .modal-actions {
+        flex-direction: column-reverse;
+      }
+      .modal-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <!-- IDENTITÉ -->
+  <header class="brand">
+    <h1>Ma <span>Conciergerie</span></h1>
+    <div class="brand-subtitle">
+      Auto <span>& Maison</span>
+    </div>
+    <p class="tag">
+      Votre alliée de confiance pour faciliter votre quotidien.
+    </p>
+  </header>
+  <!-- CONNEXION -->
+  <section id="login" class="box">
+    <h2 class="pink">🔐 Connexion</h2>
+    <p class="small">Accédez à votre espace Ma Conciergerie.</p>
+    <input
+      id="email"
+      type="email"
+      autocomplete="email"
+      placeholder="Votre e-mail"
+    >
+    <input
+      id="password"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Votre mot de passe"
+    >
+    <button id="loginButton" type="button" onclick="login()">
+      Se connecter
+    </button>
+    <div id="error" class="error"></div>
+  </section>
+  <!-- APPLICATION -->
+  <section id="app" class="hidden">
+    <div class="box">
+      <button class="logout" type="button" onclick="logout()">
+        Déconnexion
+      </button>
+      <div class="dashboard-header">
+        <h2>🌸 Bonjour, <span id="username"></span></h2>
+        <p class="small">Voici un aperçu de votre activité.</p>
+      </div>
+      <div class="grid">
+        <div class="stat">
+          <span>CLIENTES</span>
+          <div id="clientsCount" class="num">–</div>
+        </div>
+        <div class="stat">
+          <span>DOSSIERS</span>
+          <div id="dossiersCount" class="num">–</div>
+        </div>
+        <div class="stat">
+          <span>EN COURS</span>
+          <div id="openCount" class="num">–</div>
+        </div>
+      </div>
+    </div>
+    <!-- CLIENTES -->
+    <div class="box" id="adminPanel">
+      <h2 class="pink">👩 Ajouter une cliente</h2>
+      <input id="cname" placeholder="Nom de la cliente">
+      <input id="cemail" type="email" placeholder="E-mail">
+      <input id="cphone" type="tel" placeholder="Téléphone">
+      <button id="addClientButton" type="button" onclick="addClient()">
+        Ajouter la cliente
+      </button>
+      <h3>Mes clientes</h3>
+      <div id="clientsList"></div>
+    </div>
+    <!-- DOSSIERS -->
+    <div class="box">
+      <h2 class="pink">📁 Dossiers</h2>
+      <div id="newDossier">
+        <input id="dtitle" placeholder="Titre du dossier">
+        <input
+          id="demail"
+          type="email"
+          placeholder="E-mail de la cliente"
+        >
+        <select id="dstatus">
+          <option value="Nouveau">Nouveau</option>
+          <option value="En cours">En cours</option>
+          <option value="En attente">En attente</option>
+          <option value="Terminé">Terminé</option>
+        </select>
+        <textarea
+          id="dnotes"
+          placeholder="Notes ou informations importantes"
+        ></textarea>
+        <button id="addDossierButton" type="button" onclick="addDossier()">
+          Créer le dossier
+        </button>
+      </div>
+      <h3>Mes dossiers</h3>
+      <div id="dossiersList"></div>
+    </div>
+  </section>
+  <footer>
+    📞 +32 471 83 00 32 · Disponible dans toute la Belgique 🇧🇪
+  </footer>
 </main>
+<!-- CONTENEUR DES FENÊTRES -->
+<div id="modalContainer" class="hidden"></div>
 <script>
+"use strict";
+/* ==========================================
+   CONFIGURATION
+========================================== */
 const API_URL = "https://ma-conciergerie-p0en.onrender.com";
-let token=localStorage.token||"", user=null;
-async function api(url,opt={}){
-  opt.headers={
-    ...(opt.headers||{}),
-    "Content-Type":"application/json",
-    ...(token?{Authorization:"Bearer "+token}:{})
-  };
-
-  let r=await fetch(API_URL + url,opt);
-  let j=await r.json();
-
-  if(!r.ok) throw new Error(j.error||"Erreur");
-  return j;
+let token = localStorage.getItem("token") || "";
+let user = null;
+/* ==========================================
+   OUTILS
+========================================== */
+function getEl(id) {
+  return document.getElementById(id);
 }
-async function login() {
-  const errorBox = document.getElementById("error");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-
-  errorBox.textContent = "Connexion en cours...";
-
+function escapeHtml(value) {
+  const div = document.createElement("div");
+  div.textContent = value ?? "";
+  return div.innerHTML;
+}
+function setButtonLoading(button, loading, loadingText = "Chargement...") {
+  if (!button) return;
+  if (loading) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = loadingText;
+    button.disabled = true;
+  } else {
+    button.textContent = button.dataset.originalText || button.textContent;
+    button.disabled = false;
+  }
+}
+function clearSession() {
+  localStorage.removeItem("token");
+  token = "";
+  user = null;
+}
+function closeModal() {
+  const container = getEl("modalContainer");
+  container.innerHTML = "";
+  container.classList.add("hidden");
+}
+/* ==========================================
+   API
+========================================== */
+async function api(url, options = {}) {
+  const headers = {
+    ...(options.headers || {}),
+    "Content-Type": "application/json"
+  };
+  if (token) {
+    headers.Authorization = "Bearer " + token;
+  }
+  let response;
   try {
-    const j = await api("/api/login", {
+    response = await fetch(API_URL + url, {
+      ...options,
+      headers
+    });
+  } catch {
+    throw new Error(
+      "Impossible de contacter le serveur. Vérifiez votre connexion."
+    );
+  }
+  let data = {};
+  try {
+    data = await response.json();
+  } catch {
+    // Certaines réponses peuvent être vides.
+  }
+  if (!response.ok) {
+    const message = data.error || "Une erreur est survenue.";
+    // On ne déconnecte que si le serveur indique réellement
+    // que la session est invalide.
+    if (response.status === 401) {
+      clearSession();
+    }
+    throw new Error(message);
+  }
+  return data;
+}
+/* ==========================================
+   CONNEXION
+========================================== */
+async function login() {
+  const errorBox = getEl("error");
+  const email = getEl("email").value.trim();
+  const password = getEl("password").value;
+  const button = getEl("loginButton");
+  errorBox.textContent = "";
+  if (!email || !password) {
+    errorBox.textContent =
+      "Veuillez renseigner votre e-mail et votre mot de passe.";
+    return;
+  }
+  setButtonLoading(button, true, "Connexion...");
+  try {
+    const result = await api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
+    });
+    if (!result.token) {
+      throw new Error("Le serveur n'a pas fourni de session.");
+    }
+    token = result.token;
+    user = result.user || null;
+    localStorage.setItem("token", token);
+    getEl("password").value = "";
+    await showApp();
+  } catch (error) {
+    errorBox.textContent = error.message;
+  } finally {
+    setButtonLoading(button, false);
+  }
+}
+function logout() {
+  clearSession();
+  location.reload();
+}
+/* ==========================================
+   APPLICATION
+========================================== */
+async function showApp() {
+  getEl("login").classList.add("hidden");
+  getEl("app").classList.remove("hidden");
+  try {
+    // Le token JWT contient les informations nécessaires
+    // pour l'affichage de l'utilisateur.
+    const parts = token.split(".");
+    if (parts.length !== 3) {
+      throw new Error("Session invalide.");
+    }
+    const payload = JSON.parse(
+      atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))
+    );
+    user = user || payload;
+    getEl("username").textContent =
+      user.name || user.email || "Bienvenue";
+    const isAdmin = user.role === "admin";
+    getEl("adminPanel").classList.toggle("hidden", !isAdmin);
+    getEl("newDossier").classList.toggle("hidden", !isAdmin);
+    await refresh();
+  } catch (error) {
+    console.error("Erreur application :", error);
+    // Une erreur de chargement des données ne doit pas
+    // provoquer une déconnexion automatique.
+    getEl("app").classList.add("hidden");
+    getEl("login").classList.remove("hidden");
+    getEl("error").textContent =
+      "Connexion établie, mais les données n'ont pas pu être chargées : "
+      + error.message;
+  }
+}
+/* ==========================================
+   ACTUALISATION
+========================================== */
+async function refresh() {
+  const dashboard = await api("/api/dashboard");
+  getEl("clientsCount").textContent =
+    dashboard.clients ?? 0;
+  getEl("dossiersCount").textContent =
+    dashboard.dossiers ?? 0;
+  getEl("openCount").textContent =
+    dashboard.dossiersOuverts ?? 0;
+  await loadDossiers();
+  if (user && user.role === "admin") {
+    await loadClients();
+  }
+}
+/* ==========================================
+   DOSSIERS
+========================================== */
+async function loadDossiers() {
+  const dossiers = await api("/api/dossiers");
+  const list = getEl("dossiersList");
+  if (!Array.isArray(dossiers) || dossiers.length === 0) {
+    list.innerHTML =
+      '<p class="empty">Aucun dossier pour le moment.</p>';
+    return;
+  }
+  list.innerHTML = dossiers.map(dossier => {
+    const email =
+      dossier.client_email || dossier.clientEmail || "";
+    const actions = user && user.role === "admin"
+      ? `
+        <div class="actions">
+          <button
+            type="button"
+            class="icon-btn"
+            title="Modifier"
+            aria-label="Modifier le dossier"
+            onclick="openEditDossier('${escapeHtml(dossier.id)}')"
+          >✏️</button>
+          <button
+            type="button"
+            class="icon-btn delete-btn"
+            title="Supprimer"
+            aria-label="Supprimer le dossier"
+            onclick="confirmDeleteDossier('${escapeHtml(dossier.id)}')"
+          >🗑️</button>
+        </div>
+      `
+      : "";
+    return `
+      <div class="row">
+        <strong class="item-title">
+          ${escapeHtml(dossier.title)}
+        </strong>
+        <span class="status">
+          ${escapeHtml(dossier.status)}
+        </span>
+        <br>
+        <span class="small">
+          ${escapeHtml(email)}
+        </span>
+        ${actions}
+      </div>
+    `;
+  }).join("");
+}
+async function addDossier() {
+  const button = getEl("addDossierButton");
+  const title = getEl("dtitle").value.trim();
+  const clientEmail = getEl("demail").value.trim();
+  const status = getEl("dstatus").value;
+  const notes = getEl("dnotes").value.trim();
+  if (!title || !clientEmail) {
+    alert("Veuillez renseigner le titre et l'e-mail de la cliente.");
+    return;
+  }
+  setButtonLoading(button, true, "Création...");
+  try {
+    await api("/api/dossiers", {
       method: "POST",
       body: JSON.stringify({
-        email: emailInput.value,
-        password: passwordInput.value
+        title,
+        clientEmail,
+        status,
+        notes
       })
     });
-
-    token = j.token;
-    user = j.user;
-    localStorage.token = token;
-    showApp();
-
-  } catch (e) {
-    errorBox.textContent = "Erreur : " + e.message;
-  }
-}
-function logout(){localStorage.clear();location.reload()}
-async function showApp() {
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    user = payload;
-
-    document.getElementById("username").textContent = user.name || "";
-
-    if (user.role !== "admin") {
-      document.getElementById("adminPanel").classList.add("hidden");
-      document.getElementById("newDossier").classList.add("hidden");
-    }
-
+    getEl("dtitle").value = "";
+    getEl("demail").value = "";
+    getEl("dstatus").value = "Nouveau";
+    getEl("dnotes").value = "";
     await refresh();
-
-  } catch (e) {
-    console.error("Erreur lors du chargement :", e);
-    document.getElementById("error").textContent =
-      "Connexion réussie, mais les données n'ont pas pu être chargées.";
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setButtonLoading(button, false);
   }
 }
-async function refresh() {
-  const d = await api("/api/dashboard");
-
-  clientsCount.textContent = d.clients;
-  dossiersCount.textContent = d.dossiers;
-  openCount.textContent = d.dossiersOuverts;
-
-  const ds = await api("/api/dossiers");
-
-  dossiersList.innerHTML =
-    "<h3>Mes dossiers</h3>" +
-    (ds.length
-      ? ds.map(x => `
-        <div class="row">
-          <b>${x.title}</b> · ${x.status}<br>
-          <span class="small">${x.client_email || x.clientEmail || ""}</span><br>
-          ${user.role === "admin"
-            ? `<button onclick="editDossier('${x.id}')">✏️ Modifier</button>`
-            : ""}
-        </div>
-      `).join("")
-      : "<p class='small'>Aucun dossier pour le moment.</p>");
-
-  if (user.role === "admin") {
-    const cs = await api("/api/clients");
-
-    clientsList.innerHTML = cs.length
-      ? cs.map(x => `
-        <div class="row">
-          <b>${x.name}</b><br>
-          <span class="small">${x.email} · ${x.phone || ""}</span><br>
-          <button onclick="editClient('${x.id}')">✏️ Modifier</button>
-        </div>
-      `).join("")
-      : "<p class='small'>Aucune cliente pour le moment.</p>";
+/* ==========================================
+   CLIENTES
+========================================== */
+async function loadClients() {
+  const clients = await api("/api/clients");
+  const list = getEl("clientsList");
+  if (!Array.isArray(clients) || clients.length === 0) {
+    list.innerHTML =
+      '<p class="empty">Aucune cliente pour le moment.</p>';
+    return;
+  }
+  list.innerHTML = clients.map(client => `
+    <div class="row">
+      <strong class="item-title">
+        ${escapeHtml(client.name)}
+      </strong>
+      <span class="small">
+        ${escapeHtml(client.email)}
+        ${client.phone ? " · " + escapeHtml(client.phone) : ""}
+      </span>
+      <div class="actions">
+        <button
+          type="button"
+          class="icon-btn"
+          title="Modifier"
+          aria-label="Modifier la cliente"
+          onclick="openEditClient('${escapeHtml(client.id)}')"
+        >✏️</button>
+        <button
+          type="button"
+          class="icon-btn delete-btn"
+          title="Supprimer"
+          aria-label="Supprimer la cliente"
+          onclick="confirmDeleteClient('${escapeHtml(client.id)}')"
+        >🗑️</button>
+      </div>
+    </div>
+  `).join("");
+}
+async function addClient() {
+  const button = getEl("addClientButton");
+  const name = getEl("cname").value.trim();
+  const email = getEl("cemail").value.trim();
+  const phone = getEl("cphone").value.trim();
+  if (!name || !email) {
+    alert("Veuillez renseigner le nom et l'e-mail.");
+    return;
+  }
+  setButtonLoading(button, true, "Ajout...");
+  try {
+    await api("/api/clients", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        email,
+        phone
+      })
+    });
+    getEl("cname").value = "";
+    getEl("cemail").value = "";
+    getEl("cphone").value = "";
+    await refresh();
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setButtonLoading(button, false);
   }
 }
-async function editClient(id) {
+/* ==========================================
+   MODIFICATION CLIENTE
+========================================== */
+async function openEditClient(id) {
   try {
     const clients = await api("/api/clients");
-    const client = clients.find(x => x.id === id);
-
+    const client = clients.find(item => item.id === id);
     if (!client) {
-      alert("Cliente introuvable.");
-      return;
+      throw new Error("Cliente introuvable.");
     }
-
-    const name = prompt("Nom de la cliente :", client.name);
-    if (name === null) return;
-
-    const email = prompt("E-mail de la cliente :", client.email);
-    if (email === null) return;
-
-    const phone = prompt("Téléphone :", client.phone || "");
-    if (phone === null) return;
-
-    await api("/api/clients/" + id, {
+    openModal(`
+      <div class="modal">
+        <h2 class="pink">Modifier la cliente</h2>
+        <input id="editClientName"
+          value="${escapeHtml(client.name)}"
+          placeholder="Nom">
+        <input id="editClientEmail"
+          type="email"
+          value="${escapeHtml(client.email)}"
+          placeholder="E-mail">
+        <input id="editClientPhone"
+          type="tel"
+          value="${escapeHtml(client.phone || "")}"
+          placeholder="Téléphone">
+        <div class="modal-actions">
+          <button type="button" class="secondary" onclick="closeModal()">
+            Annuler
+          </button>
+          <button type="button" id="saveClientButton"
+            onclick="saveClient('${escapeHtml(id)}')">
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    `);
+  } catch (error) {
+    alert(error.message);
+  }
+}
+async function saveClient(id) {
+  const button = getEl("saveClientButton");
+  const name = getEl("editClientName").value.trim();
+  const email = getEl("editClientEmail").value.trim();
+  const phone = getEl("editClientPhone").value.trim();
+  if (!name || !email) {
+    alert("Le nom et l'e-mail sont obligatoires.");
+    return;
+  }
+  setButtonLoading(button, true, "Enregistrement...");
+  try {
+    await api("/api/clients/" + encodeURIComponent(id), {
       method: "PUT",
       body: JSON.stringify({ name, email, phone })
     });
-
+    closeModal();
     await refresh();
-    alert("✅ Cliente modifiée avec succès.");
-
-  } catch (e) {
-    alert("Erreur : " + e.message);
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setButtonLoading(button, false);
   }
 }
-
-async function editDossier(id) {
+/* ==========================================
+   MODIFICATION DOSSIER
+========================================== */
+async function openEditDossier(id) {
   try {
     const dossiers = await api("/api/dossiers");
-    const dossier = dossiers.find(x => x.id === id);
-
+    const dossier = dossiers.find(item => item.id === id);
     if (!dossier) {
-      alert("Dossier introuvable.");
-      return;
+      throw new Error("Dossier introuvable.");
     }
-
-    const title = prompt("Titre du dossier :", dossier.title);
-    if (title === null) return;
-
-    const clientEmail = prompt(
-      "E-mail de la cliente :",
-      dossier.client_email || dossier.clientEmail || ""
-    );
-    if (clientEmail === null) return;
-
-    const status = prompt(
-      "Statut (Nouveau, En cours, En attente ou Terminé) :",
-      dossier.status
-    );
-    if (status === null) return;
-
-    const notes = prompt("Notes :", dossier.notes || "");
-    if (notes === null) return;
-
-    await api("/api/dossiers/" + id, {
+    const clientEmail =
+      dossier.client_email || dossier.clientEmail || "";
+    openModal(`
+      <div class="modal">
+        <h2 class="pink">Modifier le dossier</h2>
+        <input id="editDossierTitle"
+          value="${escapeHtml(dossier.title)}"
+          placeholder="Titre du dossier">
+        <input id="editDossierEmail"
+          type="email"
+          value="${escapeHtml(clientEmail)}"
+          placeholder="E-mail de la cliente">
+        <select id="editDossierStatus">
+          <option value="Nouveau">Nouveau</option>
+          <option value="En cours">En cours</option>
+          <option value="En attente">En attente</option>
+          <option value="Terminé">Terminé</option>
+        </select>
+        <textarea id="editDossierNotes"
+          placeholder="Notes ou informations importantes"
+        >${escapeHtml(dossier.notes || "")}</textarea>
+        <div class="modal-actions">
+          <button type="button" class="secondary" onclick="closeModal()">
+            Annuler
+          </button>
+          <button type="button" id="saveDossierButton"
+            onclick="saveDossier('${escapeHtml(id)}')">
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    `);
+    getEl("editDossierStatus").value =
+      ["Nouveau", "En cours", "En attente", "Terminé"]
+        .includes(dossier.status)
+        ? dossier.status
+        : "Nouveau";
+  } catch (error) {
+    alert(error.message);
+  }
+}
+async function saveDossier(id) {
+  const button = getEl("saveDossierButton");
+  const title = getEl("editDossierTitle").value.trim();
+  const clientEmail = getEl("editDossierEmail").value.trim();
+  const status = getEl("editDossierStatus").value;
+  const notes = getEl("editDossierNotes").value.trim();
+  if (!title || !clientEmail) {
+    alert("Le titre et l'e-mail de la cliente sont obligatoires.");
+    return;
+  }
+  setButtonLoading(button, true, "Enregistrement...");
+  try {
+    await api("/api/dossiers/" + encodeURIComponent(id), {
       method: "PUT",
       body: JSON.stringify({
         title,
@@ -209,15 +955,116 @@ async function editDossier(id) {
         notes
       })
     });
-
+    closeModal();
     await refresh();
-    alert("✅ Dossier modifié avec succès.");
-
-  } catch (e) {
-    alert("Erreur : " + e.message);
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setButtonLoading(button, false);
   }
 }
-async function addClient(){try{await api("/api/clients",{method:"POST",body:JSON.stringify({name:cname.value,email:cemail.value,phone:cphone.value})});cname.value=cemail.value=cphone.value="";await refresh()}catch(e){alert(e.message)}}
-async function addDossier(){try{await api("/api/dossiers",{method:"POST",body:JSON.stringify({title:dtitle.value,clientEmail:demail.value,status:dstatus.value,notes:dnotes.value})});dtitle.value=demail.value=dnotes.value="";await refresh()}catch(e){alert(e.message)}}
-if(token)showApp();
-</script></body></html>
+/* ==========================================
+   SUPPRESSION AVEC CONFIRMATION
+========================================== */
+function confirmDeleteClient(id) {
+  openModal(`
+    <div class="modal">
+      <h2 class="pink">Supprimer la cliente ?</h2>
+      <p class="confirm-text">
+        Cette suppression est définitive. Une cliente possédant encore
+        des dossiers ne pourra pas être supprimée.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="secondary" onclick="closeModal()">
+          Annuler
+        </button>
+        <button type="button" class="danger"
+          id="deleteClientButton"
+          onclick="deleteClient('${escapeHtml(id)}')">
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  `);
+}
+async function deleteClient(id) {
+  const button = getEl("deleteClientButton");
+  setButtonLoading(button, true, "Suppression...");
+  try {
+    await api("/api/clients/" + encodeURIComponent(id), {
+      method: "DELETE"
+    });
+    closeModal();
+    await refresh();
+  } catch (error) {
+    alert(error.message);
+    setButtonLoading(button, false);
+  }
+}
+function confirmDeleteDossier(id) {
+  openModal(`
+    <div class="modal">
+      <h2 class="pink">Supprimer le dossier ?</h2>
+      <p class="confirm-text">
+        Cette action supprimera définitivement ce dossier.
+        Cette opération ne pourra pas être annulée.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="secondary" onclick="closeModal()">
+          Annuler
+        </button>
+        <button type="button" class="danger"
+          id="deleteDossierButton"
+          onclick="deleteDossier('${escapeHtml(id)}')">
+          Supprimer définitivement
+        </button>
+      </div>
+    </div>
+  `);
+}
+async function deleteDossier(id) {
+  const button = getEl("deleteDossierButton");
+  setButtonLoading(button, true, "Suppression...");
+  try {
+    await api("/api/dossiers/" + encodeURIComponent(id), {
+      method: "DELETE"
+    });
+    closeModal();
+    await refresh();
+  } catch (error) {
+    alert(error.message);
+    setButtonLoading(button, false);
+  }
+}
+/* ==========================================
+   GESTION DES FENÊTRES
+========================================== */
+function openModal(content) {
+  const container = getEl("modalContainer");
+  container.innerHTML = `
+    <div class="modal-backdrop" onclick="handleBackdrop(event)">
+      ${content}
+    </div>
+  `;
+  container.classList.remove("hidden");
+}
+function handleBackdrop(event) {
+  if (event.target.classList.contains("modal-backdrop")) {
+    closeModal();
+  }
+}
+// Fermeture avec la touche Échap.
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
+/* ==========================================
+   DÉMARRAGE
+========================================== */
+if (token) {
+  showApp();
+}
+</script>
+</body>
+</html>
